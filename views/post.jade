@@ -1,27 +1,30 @@
-include includes/navbars
-#subnav.navbar
-    .container
-        .row-fluid
-            .span1
-            .span11
-                ul.nav
-                    mixin postsnav('list')
+extends layout
 
-#content.container-fluid
-    .row-fluid
-        #sidebar.span2
-            form#searchForm.rule-h-bottom(action='/post/index', method="get")
-                input#tags(type='search', placeholder='Search Posts')
-            - each tag in tags
-                a.tag(href='/wiki/show/'+tag.n) ?
-                |&nbsp;
-                if tag.m.t
-                    a(class='tag tag-type-'+tag.m.t, href='/post/show/tags='+tag.n)= tag.p
-                else
-                    a.tag(href='/post/show/tags='+tag.n)= tag.p
-                |&nbsp;
-                span.tagC.badge.badge-info= tag.c
-        #gallery.span10.rule-v-left
-            - each image in images
-              div.span2
-                img(src= image.f, title= image.d ).thumbnail
+block content
+    include includes/navbars
+    #subnav.navbar
+        .container
+            .row-fluid
+                .span1
+                .span11
+                    ul.nav
+                        mixin postsnav('list')
+
+    #content.container-fluid
+        .row-fluid
+            #sidebar.span2
+                form#searchForm.rule-h-bottom(action='/post/index', method="get")
+                    input#tags(type='search', placeholder='Search Posts')
+                - each tag in tags
+                    a.tag(href='/wiki/show/'+tag.n) ?
+                    |&nbsp;
+                    if tag.m.t
+                        a(class='tag tag-type-'+tag.m.t, href='/post/show/tags='+tag.n)= tag.p
+                    else
+                        a.tag(href='/post/show/tags='+tag.n)= tag.p
+                    |&nbsp;
+                    span.tagC.badge.badge-info= tag.c
+            #gallery.span10.rule-v-left
+                - each image in images
+                  div.span2
+                    img(src= image.f, title= image.d ).thumbnail
