@@ -1,7 +1,6 @@
 extends layout
 
 block content
-    include includes/navbars
     #subnav.navbar
         .container
             .row-fluid
@@ -9,6 +8,8 @@ block content
                 .span11
                     ul.nav
                         mixin postsnav('list')
+
+    mixin flashbox
 
     #content.container-fluid
         .row-fluid
