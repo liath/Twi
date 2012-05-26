@@ -1,0 +1,63 @@
+#auth {
+    margin-top: 40px;
+}
+#login, #signup {
+    background-color: #454545;
+    margin: 0;
+    height: 167px;
+    overflow: hidden;
+}
+#auth-box h1 {
+    font-size: 30px;
+    line-height: 36px;
+    transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -webkit-transform: rotate(-90deg);
+    transform-origin: top left;
+    -o-transform-origin: top left;
+    -ms-transform-origin: top left;
+    -moz-transform-origin: top left;
+    -webkit-transform-origin: top left;
+    margin-top: 167px;
+    text-align: center;
+    width: 167px;
+    background-color: #0077B3;
+}
+#auth-box {
+    box-shadow: 1px 1px 10px
+    rgba(0, 0, 0, 0.3);
+    width:540px;
+}
+.turnways {
+    display: inline-block;
+    width: 36px;
+    height: 167px;
+    overflow: hidden;
+    float: left;
+}
+#auth-box input.btn {
+    float:right;
+    margin-right: 8px;
+}
+#login-form {
+    padding-top:40px;
+    width: 234px;
+    float:right;
+    text-align: center;
+}
+#signup-form {
+    padding-top:17px;
+    width: 234px;
+    float:right;
+    text-align: center;
+}
+#auth-box .control-group {
+    margin-bottom:0px;
+}
+.control-group.success input {
+    color: #3C3;
+    border-color: transparent;
+    box-shadow: 0 0 8px rgba(51, 201, 51, 0.9);
+}
