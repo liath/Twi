@@ -1,0 +1,54 @@
+link(rel='stylesheet', href='/css/login.css')
+#auth.container
+    .row
+        .span3
+            |&nbsp;
+        #auth-box.span6
+            #login.span3
+                .turnways
+                    h1 Login
+                form(id="login-form", method="post", action="/login/")
+                    input#username.input(type="text", placeholder="Username", name="username")
+                    input#password.input(type="password", placeholder="Password", name="password")
+                    input.btn(type="submit", value="Login")
+            #signup.span3
+                .turnways
+                   h1 Signup
+                form(id="signup-form", method="post", action="/s/create", autocomplete="off")
+                    #username-c.control-group
+                        input#s-username.input(type="text", placeholder="Username", name="username")
+                    input#s-password.input(type="password", placeholder="Password", name="password")
+                    input#s-email.input(type="email", placeholder="Email", name="email")
+                    input.btn(type="submit", value="Register")
+        .span3
+            |&nbsp;
+script
+    $(function(){
+        var sunttt;
+        $('#s-username').tooltip({
+            trigger: 'manual'
+        });
+       $('#s-username').blur(function() {
+            $.getJSON('/s/username/'+$('#s-username').val(), function(data) {
+                if(data.available == true) {
+                    clearTimeout(sunttt);
+                    $('#username-c').addClass('success');
+                    $('#username-c').removeClass('error');
+                    $('#s-username').data('tooltip').options.title="Username Available";
+                    $('#s-username').tooltip('show');
+                    sunttt = setTimeout("$('#s-username').tooltip('hide')",3000);
+                } else {
+                    clearTimeout(sunttt);
+                    $('#username-c').removeClass('success');
+                    $('#username-c').addClass('error');
+                    $('#s-username').data('tooltip').options.title="Username in use";
+                    $('#s-username').tooltip('show');
+                    sunttt = setTimeout("$('#s-username').tooltip('hide')",3000);
+                }
+            });
+       });
+       $('#s-password').tooltip({
+            title: 'Pick wisely!'
+       });
+       $('#s-email').tooltip({title: 'For account recovery and verification.!'});
+    });

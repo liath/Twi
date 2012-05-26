@@ -1,0 +1,3 @@
+<div>Thank you for registering {{user}},</div>
+<br/>
+<div>Click <a href="http://{{domain}}/s/verify/{{token}}">here<a/> to finish!</div>

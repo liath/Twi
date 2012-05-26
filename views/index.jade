@@ -1,0 +1,57 @@
+style(type="text/css")
+    body {
+        color:#FFF;
+    }
+    #boardName {
+        font-size:4em;
+        color:#811399;
+    }
+    .spaceplz   {
+        margin-bottom:10px;
+    }
+    .well {
+        background-color:#333;
+        margin:0 auto;
+        text-align:center;
+    }
+    #main {
+        margin:20% auto 20px auto;
+        padding: 20px;
+        width: 300px;
+    }
+    #lower {
+        padding:10px;
+        width: 320px;
+    }
+    #count {
+        color:#811399;
+    }
+.container
+    .row-fluid
+        .span3
+        .span6
+            #main.well
+                h1#boardName.spaceplz= board.name
+                .spaceplz
+                    a(href="/post") Posts
+                    | &nbsp;&nbsp;
+                    a(href="/comment") Comments
+                    | &nbsp;&nbsp;
+                    a(href="/tag") Tags
+                    | &nbsp;&nbsp;
+                    a(href="/wiki") Wiki
+                    | &nbsp;&nbsp;
+                    a(href="/more") &#187;
+                form.spaceplz(action="/post/")
+                    .input-append
+                        input(type="search", placeholder="Search Posts")
+                        button.btn(type="submit")
+                            <i class="icon-search"></i>
+                h3#count= count
+            #lower.well Serving #{count} posts - Running Twi-#{board.version}
+
+        .span3
+    - if (board.flash.length > 0) {
+        - each flash in board.flash
+            div(class="alert alert-"+flash.type)= flash.message
+    - }

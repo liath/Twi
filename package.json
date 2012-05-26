@@ -1,0 +1,16 @@
+{
+    "name": "application-name"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+      "express": "2.5.8"
+    , "less": ">= 0.0.1"
+    , "jade": ">= 0.0.1"
+    , "mongodb": ">=0.9.6-7"
+    , "connect": ">=2.3.0"
+    , "passport": ">=0.1.8"
+    , "passport-local": ">=0.1.2"
+    , "connect-flash": ">=0.1.0"
+    , "mailer": ">=0.6.7"
+  }
+}

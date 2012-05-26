@@ -1,0 +1,18 @@
+mixin navbar(active, categories)
+    - each category in categories
+            - if (active == category.t)
+                li.active
+                    a(href="/"+category.t+"/")!= category.n
+            - else
+                li
+                    a(href="/"+category.t+"/")!= category.n
+
+mixin mainnav(active, loggedin)
+    - if(loggedin) categories = [{t: 'logout',n: 'Logout'}];
+    - else categories = [{t: 'login',n: 'Login/Signup'}];
+    - categories = categories.concat([{t: 'post',n: 'Posts'},{t: 'comment',n: 'Comments'},{t: 'note',n: 'Notes'},{t: 'artist',n: 'Artists'},{t: 'tag',n: 'Tags'},{t: 'wiki',n: 'Wiki'},{t: 'more',n: '&#187;'}]);
+    mixin navbar(active, categories)
+
+mixin postsnav(active)
+    - categories = [{t: 'list', n: 'List'},{t: 'upload', n: 'Upload'},{t: 'favorites', n: 'Favorites'},{t: 'subscriptions', n: 'Subscriptions'},{t: 'popular', n: 'Popular'},{t: 'random', n: 'Random'},{t: 'changes', n: 'Recent changes'},{t: 'approvals', n: 'Recent approvals'}];
+    mixin navbar(active, categories)

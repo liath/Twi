@@ -1,0 +1,48 @@
+include includes/navbars
+!!!html
+- var beg = '<html class="no-js'
+- var end = '" lang="en">'
+//if lt IE 7
+    != beg + ' lt-ie9 lt-ie8 lt-ie7' + end
+//if IE 7
+    != beg + ' lt-ie9 lt-ie8' + end
+//if IE 8
+    != beg + ' lt-ie9' + end
+//if gt IE 8
+    != '<!-->' + beg + end + '<!--'
+
+head
+    meta(charset='utf-8')
+
+    meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
+    link(rel="icon", type="image/gif", href="/favicon.gif")
+    title
+    meta(name='description', content='')
+    meta(name='author', content='')
+
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+
+    link(rel='stylesheet', href='/css/bootstrap.css')
+    link(rel='stylesheet', href='/css/bootstrap-responsive.css')
+    link(rel='stylesheet', href='/css/style.css')
+    script(src='//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')
+    script window.jQuery || document.write('<script src="/js/libs/jquery-1.7.2.min.js"><\\/script>')
+body
+    -if (typeof(active) != 'undefined') {
+        .navbar
+                .navbar-inner
+                    .container
+                        a.btn.btn-navbar(data-toggle='collapse', data-target='.nav-collapse')
+                            span.icon-bar
+                            span.icon-bar
+                            span.icon-bar
+                        a.brand(href="/")= board.name
+                        .nav-collapse
+                            ul.nav
+                                mixin mainnav(active, board.authenticated)
+                        ///.nav-collapse
+    -}
+    body!= body
+
+    script(src='/js/bootstrap.js')
+    script(src='/js/site.js')
