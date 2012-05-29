@@ -8,6 +8,8 @@ mixin flashbox
                                 .row-fluid
                                     .span4
                                     .flash.alert.alert-error.span4= flash
+                                        a.close(href="#")
+                                            | &times;
                                     .span4
                     - }
                     - if (board.flash.info.length > 0) {
@@ -16,6 +18,8 @@ mixin flashbox
                                 .row-fluid
                                     .span4
                                     .flash.alert.alert-info.span4= flash
+                                        a.close(href="#")
+                                            | &times;
                                     .span4
             - }
         - }

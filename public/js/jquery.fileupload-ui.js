@@ -463,7 +463,7 @@
         _renderPreviews: function (files, nodes) {
             var that = this,
                 options = this.options;
-            nodes.find('.preview span').each(function (index, element) {
+            nodes.find('.preview span.fade').each(function (index, element) {
                 var file = files[index];
                 if (options.previewSourceFileTypes.test(file.type) &&
                         ($.type(options.previewSourceMaxFileSize) !== 'number' ||
