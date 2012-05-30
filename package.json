@@ -12,5 +12,6 @@
     , "passport-local": ">=0.1.2"
     , "connect-flash": ">=0.1.0"
     , "mailer": ">=0.6.7"
+    , "minimatch": ">=0.2.4"
   }
 }

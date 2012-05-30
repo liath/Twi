@@ -4,7 +4,7 @@ $(function(){
     window.tags = {};
 
     $.getJSON("/s/tags", function(json) {
-        tags = json;
+        window.tags = json;
     });
 
     window.delayFix = function() {
@@ -13,7 +13,7 @@ $(function(){
             $(this).attr('src', $(this).data().imageurl);
         });
         $('.taglist').typeahead({
-            source: tags,
+            source: window.tags,
             property: 'p',
             onselect: function(caller, data) {
                 $('.taglist').val('');
@@ -28,6 +28,23 @@ $(function(){
                 }
                 //Rather than doing a flat append it would be smoother to take the list from filetags and recreate the content of tags everytime. Then we could sort it and make sure it's unique.
             }
+        });
+        //Update the hook on the forms to include the new form
+        $('.upload-info-form').submit(function(e) {
+            $(e.currentTarget).children('button').attr('disabled', 'disabled');
+            $(e.currentTarget).parent().append('<div class="submit-overlay"></div>')
+            $(e.currentTarget).parent().children('.submit-overlay').css({top:$(e.currentTarget).parent().parent().position().top, left: $(e.currentTarget).parent().parent().position().left, height: $(e.currentTarget).parent().parent().height(), width: $(e.currentTarget).parent().parent().width()});
+            var overlay = $(e.currentTarget).parent().children('.submit-overlay');
+            var form    = $(e.currentTarget);
+            $(overlay).remove();
+            $.getJSON($(e.currentTarget).attr('action'), $(e.currentTarget).children('.file-tags').val(), function(data) {
+                console.log('Data from server:');
+                console.log(data);
+                $(overlay).remove();
+                //$(form).html('<span class="submitted-message">Done! View the post here'+data.path+'</span>');
+            })
+            e.preventDefault();
+            return false;
         });
     };
     // Initialize the jQuery File Upload widget:
@@ -57,9 +74,9 @@ $(function(){
     $('#fileupload').bind('fileuploadcompleted', function (e, data) {
         var t = setTimeout("delayFix()", 1000);
     });
-    $('#fileupload').bind('fileuploadadded', function (e, data) {
+    /*$('#fileupload').bind('fileuploadadded', function (e, data) {
         //console.log(data);
-    });
+    });*/
 
 });
 
