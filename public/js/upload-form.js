@@ -18,7 +18,9 @@ $(function(){
             onselect: function(caller, data) {
                 $('.taglist').val('');
                 var t = JSON.parse($(caller.$element).siblings('.file-tags').val());
-                t[data.n] = 1;
+                if (t.length == 0) t = [];
+                t.push(data.n)
+                t = jQuery.unique(t);
                 $(caller.$element).siblings('.file-tags').val(JSON.stringify(t));
                 var label = (typeof(data.m.t) != 'undefined') ? 'label label-'+data.m.t : 'label';
                 if ($(caller.$element).siblings('.tags').html().length == 0) {
@@ -36,13 +38,24 @@ $(function(){
             $(e.currentTarget).parent().children('.submit-overlay').css({top:$(e.currentTarget).parent().parent().position().top, left: $(e.currentTarget).parent().parent().position().left, height: $(e.currentTarget).parent().parent().height(), width: $(e.currentTarget).parent().parent().width()});
             var overlay = $(e.currentTarget).parent().children('.submit-overlay');
             var form    = $(e.currentTarget);
-            $(overlay).remove();
-            $.getJSON($(e.currentTarget).attr('action'), $(e.currentTarget).children('.file-tags').val(), function(data) {
+            var postdata = {
+                'tags' : JSON.parse($(e.currentTarget).children('.file-tags').val()),
+                'source' : $(e.currentTarget).children('.file-source').val()
+            };
+            $.post($(e.currentTarget).attr('action'), postdata, function(data) {
                 console.log('Data from server:');
                 console.log(data);
                 $(overlay).remove();
-                //$(form).html('<span class="submitted-message">Done! View the post here'+data.path+'</span>');
-            })
+                if (data.error) {
+                    if (data.error == "Image already exists.") {
+                        $(form).html('<span class="submitted-message">Image already exists, go here to view it: <a href="'+data.path+'">'+data.path+'</a></span>');
+                    } else {
+                        $(form).html('<span class="submitted-message">Error'+data.error+'</span>');
+                    }
+                } else {
+                    $(form).html('<span class="submitted-message">Done! <a href="/post/'+data.a+'">Click here to go to the post.</a></span>');
+                }
+            }, 'json');
             e.preventDefault();
             return false;
         });
