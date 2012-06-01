@@ -7,31 +7,90 @@ $(function(){
         window.tags = json;
     });
 
+    function addTag(target, tag) {
+        var t = JSON.parse(target.val());
+        if (t.length == 0) t = [];
+        else {
+            var check = false;
+            t.forEach(function(i){
+                if(i.n==tag.n){check = true;}
+            });
+            if (check) return false;
+        }
+        if (typeof(tag.t) == 'undefined') t.push({'n': tag.n, 'p': tag.p});
+        else t.push({'n': tag.n, 'p': tag.p, 't': 1});
+        t = jQuery.unique(t);
+        target.val(JSON.stringify(t));
+    }
+    function addTagLabel(to, tag){
+        var label = '';
+        if (to.html().length == 0) {
+            label = 'Tags: <span><a class="label';
+        } else {
+            label += '<span>, <a class="label';
+        }
+        if (typeof(tag.t) == 'undefined'){ // Only tags that haven't been created on the server should have a 't' property
+            if (typeof(tag.m.t) != 'undefined') {
+                label += ' label-'+tag.m.t;
+            }
+            label += '" href="/wiki/'+tag.n+'">'+tag.p+'</a><a data-tag="'+tag.n+'" class="tagdispel">&cross;</a></span>';
+        } else {
+            label += '">'+tag.p+'</a><a data-tag="'+tag.n+'" class="tagdispel">&cross;</a></span>';
+        }
+        to.append(label);
+        //Update the hook
+        $('.tagdispel').click(function() {
+            if ($(this).parent().parent().html() == null) return; //Fix weird ghosted click bug
+            var form = $(this).parent().parent().siblings('.upload-info-form');
+            var t = JSON.parse(form.children('.file-tags').val());
+            var nt = [];
+            var that = $(this);
+            t.forEach(function(i){
+                if(i.n!=that.data('tag')){nt.push(i);}
+            });
+            form.children('.file-tags').val(JSON.stringify(nt));
+            var p = $(this).parent().parent();
+            $(this).parent().remove();
+            if (p.html() == 'Tags: ') p.html('');
+        });
+    }
+    function toTitleCase(str) { //http://stackoverflow.com/questions/196972/convert-string-to-title-case-with-javascript
+        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+    }
+
     window.delayFix = function() {
         $('.delayed').each(function() {
             $(this).removeClass('delayed');
             $(this).attr('src', $(this).data().imageurl);
         });
+        //Update the hooks on EVERYTHING
         $('.taglist').typeahead({
             source: window.tags,
             property: 'p',
             onselect: function(caller, data) {
                 $('.taglist').val('');
-                var t = JSON.parse($(caller.$element).siblings('.file-tags').val());
-                if (t.length == 0) t = [];
-                t.push(data.n)
-                t = jQuery.unique(t);
-                $(caller.$element).siblings('.file-tags').val(JSON.stringify(t));
-                var label = (typeof(data.m.t) != 'undefined') ? 'label label-'+data.m.t : 'label';
-                if ($(caller.$element).siblings('.tags').html().length == 0) {
-                    $(caller.$element).siblings('.tags').html('Tags: <a class="'+label+'" href="/wiki/'+data.n+'">'+data.p+'</a>');
-                } else {
-                    $(caller.$element).siblings('.tags').append(', <a class="'+label+'" href="/wiki/'+data.n+'">'+data.p+'</a>');
-                }
+                addTag($(caller.$element).siblings('.upload-info-form').children('.file-tags'), data);
+                addTagLabel($(caller.$element).siblings('.tags'),data);
                 //Rather than doing a flat append it would be smoother to take the list from filetags and recreate the content of tags everytime. Then we could sort it and make sure it's unique.
             }
         });
-        //Update the hook on the forms to include the new form
+        $('.taglist').keydown(function(e) {
+            if (e.keyCode == 13) {
+                var tag = {
+                    p: toTitleCase($(this).val()),
+                    n: $(this).val().toLowerCase().replace(/[^a-z0-9-]/g, '-'),
+                    t: 1
+                }
+                $('.taglist').val('');
+                addTag($(this).siblings('.upload-info-form').children('.file-tags'), tag);
+                addTagLabel($(this).siblings('.tags'),tag);
+                return false;
+            }
+        });
+        $('.create-submit').click(function(){
+            $(this).parent().siblings('.upload-info-form').submit();
+            return false;
+        });
         $('.upload-info-form').submit(function(e) {
             $(e.currentTarget).children('button').attr('disabled', 'disabled');
             $(e.currentTarget).parent().append('<div class="submit-overlay"></div>')
@@ -46,14 +105,15 @@ $(function(){
                 console.log('Data from server:');
                 console.log(data);
                 $(overlay).remove();
+                var btn = '<button class="btn btn-warning right" onclick="$(this).parent().parent().remove()"><i class="icon-ban-circle icon-white"></i><span>Close</span></button>';
                 if (data.error) {
                     if (data.error == "Image already exists.") {
-                        $(form).html('<span class="submitted-message">Image already exists, go here to view it: <a href="'+data.path+'">'+data.path+'</a></span>');
+                        $(form).parent().html('<span class="submitted-message">Image already exists, go here to view it: <a href="'+data.path+'">'+data.path+'</a></span>');
                     } else {
-                        $(form).html('<span class="submitted-message">Error'+data.error+'</span>');
+                        $(form).parent().html('<span class="submitted-message">Error'+data.error+'</span>');
                     }
                 } else {
-                    $(form).html('<span class="submitted-message">Done! <a href="/post/'+data.a+'">Click here to go to the post.</a></span>');
+                    $(form).parent().html('<span class="submitted-message">Done! <a href="/post/'+data.a+'">Click here to go to the post.</a></span>');
                 }
             }, 'json');
             e.preventDefault();

@@ -4,3 +4,5 @@ logs/*
 nginx
 conf/
 res/
+public/images/*
+/*-test.js
