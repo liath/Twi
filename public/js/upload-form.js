@@ -21,6 +21,7 @@ $(function(){
         else t.push({'n': tag.n, 'p': tag.p, 't': 1});
         t = jQuery.unique(t);
         target.val(JSON.stringify(t));
+        return true;
     }
     function addTagLabel(to, tag){
         var label = '';
@@ -69,9 +70,9 @@ $(function(){
             property: 'p',
             onselect: function(caller, data) {
                 $('.taglist').val('');
-                addTag($(caller.$element).siblings('.upload-info-form').children('.file-tags'), data);
-                addTagLabel($(caller.$element).siblings('.tags'),data);
-                //Rather than doing a flat append it would be smoother to take the list from filetags and recreate the content of tags everytime. Then we could sort it and make sure it's unique.
+                if (addTag($(caller.$element).siblings('.upload-info-form').children('.file-tags'), data)) {
+                    addTagLabel($(caller.$element).siblings('.tags'),data);
+                }
             }
         });
         $('.taglist').keydown(function(e) {
@@ -82,8 +83,9 @@ $(function(){
                     t: 1
                 }
                 $('.taglist').val('');
-                addTag($(this).siblings('.upload-info-form').children('.file-tags'), tag);
-                addTagLabel($(this).siblings('.tags'),tag);
+                if (addTag($(this).siblings('.upload-info-form').children('.file-tags'), tag)) {
+                    addTagLabel($(this).siblings('.tags'),tag);
+                }
                 return false;
             }
         });
@@ -108,12 +110,12 @@ $(function(){
                 var btn = '<button class="btn btn-warning right" onclick="$(this).parent().parent().remove()"><i class="icon-ban-circle icon-white"></i><span>Close</span></button>';
                 if (data.error) {
                     if (data.error == "Image already exists.") {
-                        $(form).parent().html('<span class="submitted-message">Image already exists, go here to view it: <a href="'+data.path+'">'+data.path+'</a></span>');
+                        $(form).parent().html('<span class="submitted-message">Image already exists, go here to view it: <a href="'+data.path+'">'+data.path+'</a></span>'+btn);
                     } else {
-                        $(form).parent().html('<span class="submitted-message">Error'+data.error+'</span>');
+                        $(form).parent().html('<span class="submitted-message">Error'+data.error+'</span>'+btn);
                     }
                 } else {
-                    $(form).parent().html('<span class="submitted-message">Done! <a href="/post/'+data.a+'">Click here to go to the post.</a></span>');
+                    $(form).parent().html('<span class="submitted-message">Done! <a href="/post/'+data.a+'">Click here to go to the post.</a></span>'+btn);
                 }
             }, 'json');
             e.preventDefault();
