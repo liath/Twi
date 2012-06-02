@@ -1,0 +1,8 @@
+mixin imageMangle(image)
+    - var output = '<a class="gallerylink" href="/post/'+image.a+'/'
+    for tag in image.t
+       - output += tag+'_'
+    - (output = output.substr(0, output.length-1))
+    != output+'">'
+        img(src= image.n, title= image.d).thumbnail
+    | </a>

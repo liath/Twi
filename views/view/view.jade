@@ -1,0 +1,21 @@
+extends ../layout
+include ../includes/sidebar
+include ../includes/tagmangler
+
+block content
+    #subnav.navbar
+        .container
+            .row-fluid
+                .span1
+                .span11
+                    ul.nav
+                        mixin postsnav(active)
+
+    #content.container-fluid
+        .row-fluid
+            #sidebar.span2
+                block sidebar
+                    mixin sidebar(tags)
+
+            block main
+                mixin flashbox

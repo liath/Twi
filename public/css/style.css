@@ -9,7 +9,7 @@ body {
     padding-left:20px;
     margin-top:20px;
 }
-.thumbnail {max-width:150px; max-height:150px;}
+
 #searchForm {
     width:220px;
 }
@@ -42,11 +42,19 @@ body {
     padding-left:10px;
 }
 .flash-box {
-    margin-top:10px;
+    margin-top:30px;
+    position:fixed;
+    top:0px;
+    left:0px;
+    width:98%;
 }
 .flash {
+    margin-left: auto !important;
+    margin-right: auto !important;
     margin-top:10px;
     text-align:center;
+    float:none !important;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
 }
 .label-character {
     color:#FFF;

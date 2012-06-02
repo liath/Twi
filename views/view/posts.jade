@@ -1,0 +1,28 @@
+extends view
+
+block head
+    style(type="text/css")
+       .thumbnail {
+            max-width:150px;
+            max-height:150px;
+            display:block;
+        }
+        .gallerylink {
+            margin:0 auto;
+        }
+        .thumbnail:hover {
+            box-shadow: 1px 1px 10px rgba(0,150,200,0.7);
+        }
+        .imageholder {
+            text-align:center;
+        }
+        .imageholder span {
+            display:inline-block;
+            margin:0 auto;
+        }
+block main
+    #gallery.span10.rule-v-left
+        - each image in images
+            div.span2.imageholder
+                span
+                    mixin imageMangle(image)
