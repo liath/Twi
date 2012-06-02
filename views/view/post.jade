@@ -12,6 +12,9 @@ block head
         .left {
             float:left;
         }
+        .right {
+            float:right;
+        }
         #comments table tr {
             margin-left:0;
            margin-bottom:10px;
@@ -22,6 +25,8 @@ block head
         }
         #comments table {
             margin-bottom:20px;
+            padding:0;
+            padding-top: 10px;
         }
         #comments {
             padding-top: 30px;
@@ -34,7 +39,12 @@ block head
             text-align:right;
         }
         .comment-message {
+            width: 98%;
+        }
+        .comment {
             padding-left:10px;
+            padding-bottom: 10px;
+            padding-top: 10px;
             -webkit-box-shadow: rgba(255, 255, 255, 0.07) 1px 0 0 inset;
             -moz-box-shadow: rgba(255, 255, 255, 0.07) 1px 0 0 inset;
             box-shadow: rgba(255, 255, 255, 0.07) 1px 0 0 inset;
@@ -43,6 +53,32 @@ block head
         }
         .imageLinks h3 {
             display:inline;
+        }
+        #preview-wrapper h4 {
+            padding-left: 5px;
+        }
+        #preview-wrapper {
+            display:none;
+            margin-left:0px;
+            padding:0;
+        }
+        #preview-box {
+            min-height: 50px;
+            background-color:#444;
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+        #comments table tbody tr:nth-child(odd) {
+          background-color: #3a3a3a;
+        }
+        #comments table tbody tr:nth-child(even) {
+          background-color: #373737;
+        }
+        .highlight {
+            background-color: #555 !important;
+        }
+        #addComment textarea {
+            height:100px;
         }
 
 block append sidebar
@@ -70,9 +106,10 @@ block append sidebar
             span Rating:
                 span.rating #{image.m.r}
             br
-        span Score:
-            span.badge #{image.r}
-        br
+        //- I can't, for the life of me, figure out wtf the point of this is in danbooru
+        //- span Score:
+        //-     span.badge #{image.r}
+        //- br
         span Views:
             span.badge #{image.v}
 
@@ -88,16 +125,28 @@ block append main
                     h3 Download
         #comments.span10
             if (image.c.length > 0)
-                table.span12
+
+                //- See the block of scripts at the bottom of the page for an explanation of this
+                - function parseComment(a, c){a=a.replace(/\n/g,"<br />");a=a.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig,"<a href='$1'>$1</a>");return a=a.replace(/>>(\d+)/g,function(a,b){return'<a class="commentlink" href="#c'+b+'">@'+c[b].a+"</a>"})}
+
+                table.span12.well
                     tbody.span12
                         for comment in image.c
-                            tr.span12
+                            tr.span12(id="c"+comment.i)
                                 td.comment-info.span2
                                     span.username #{comment.a}
                                     br
                                     #{humane_date(comment.t.toISOString())}
-                                td.span10.comment-message
-                                    span #{comment.m}
+                                td.span10.comment
+                                    .right.comment-actions
+                                        a.reply(href="#", title="Reply", data-target=comment.i)
+                                            i.icon-comment.icon-white
+                                    .comment-message!= parseComment(comment.m, image.c)
+
+            #preview-wrapper.span8.well
+                h4 Preview
+                #preview-box
+
             #addComment.span6
                 form.span12(action="/s/comment/"+image.a, method="post")
                     textarea.span12(name="message")
@@ -107,7 +156,56 @@ block append main
 
 block append scripts
     script
-        $('#image img').click(function() {
-            if ($('#image img').attr('height') != '600px') $('#image img').attr('height', '600px')
-            else $('#image img').attr('height', '')
+        $(function() {
+            /*function parseReply(text) {
+                //Fix line breaks
+                text = text.replace(/\n/g, '<br />');
+
+                //Linkify links - http://stackoverflow.com/questions/37684/how-to-replace-plain-urls-with-links
+                var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+                text = text.replace(exp,"<a href='$1'>$1</a>");
+
+                //Linkify Replies
+                text = text.replace(/>>(\d+)/g, function(a,v) {
+                    var t = $('#c'+v+' .username').html();
+                    return '<a class="commentlink" href="#c'+v+'">@'+t+'</a>';
+                });
+
+                return text;
+            }*/
+            //Compiled form of the above
+            function parseReply(a){a=a.replace(/\n/g,"<br />");a=a.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig,"<a href='$1'>$1</a>");return a=a.replace(/>>(\d+)/g,function(a,b){var c=$("#c"+b+" .username").html();return'<a class="commentlink" href="#c'+b+'">@'+c+"</a>"})};
+
+            if (window.location.hash) {
+                var match = /^#c\d+/;
+                if (match.test(window.location.hash)) {
+                    $(window.location.hash).addClass('highlight');
+                }
+            }
+            $('#image img').click(function() {
+                if ($('#image img').attr('height') != '600px') $('#image img').attr('height', '600px')
+                else $('#image img').attr('height', '')
+            });
+            $('.reply').click(function(){
+                $('#addComment textarea').focus();
+                $('#addComment textarea').val($('#addComment textarea').val()+'>>'+$(this).data('target')+' ');
+                return false;
+            });
+
+            $('#preview').click(function() {
+                $('#preview-box').html(parseReply($('#addComment textarea').val()));
+                $('#preview-wrapper').css('display', 'block');
+                hooklinks();
+            });
+            function hooklinks() {
+                $('.commentlink').click(function(){
+                    highlight($($(this).attr('href')).focus());
+                });
+            }
+            hooklinks();
+
+            function highlight(t) {
+                $('.highlight').removeClass('highlight');
+                t.addClass('highlight');
+            }
         });
