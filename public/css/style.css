@@ -1,38 +1,49 @@
+/* Colors */
 body {
     background-color:#3f3f3f;
 }
 .well {
     background-color:#333;
 }
-
-#content {
-    padding-left:20px;
-    margin-top:20px;
+.label-character {
+    color:#FFF;
+    background-color:#811399;
 }
-
-#searchForm {
-    width:220px;
+#subnav {
+    background-color: #303030;
+    border-bottom: 1px solid #252525;
+    box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.05) inset;
 }
 .rule-v-left {
     -webkit-box-shadow: rgba(255, 255, 255, 0.07) 1px 0 0 inset;
     -moz-box-shadow: rgba(255, 255, 255, 0.07) 1px 0 0 inset;
     box-shadow: rgba(255, 255, 255, 0.07) 1px 0 0 inset;
     border-left: 1px solid #242424;
-    padding-left:10px;
 }
 .rule-h-bottom {
     -webkit-box-shadow: rgba(255, 255, 255, 0.07) 0 1px 0;
     -moz-box-shadow: rgba(255, 255, 255, 0.07) 0 1px 0;
     box-shadow: rgba(255, 255, 255, 0.07) 0 1px 0;
     border-bottom: 1px solid #242424;
+}
+.flash {
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Globals */
+#content {
+    padding-left:0px;
+}
+
+.rule-v-left {
+    padding-left:10px;
+}
+.rule-h-bottom {
     padding-bottom:10px;
 }
 
 #subnav {
     min-height: 25px;
-    background-color: #303030;
-    border-bottom: 1px solid #252525;
-    box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.05) inset;
 }
 #subnav .nav > li > a {
     padding:0;
@@ -54,9 +65,57 @@ body {
     margin-top:10px;
     text-align:center;
     float:none !important;
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
 }
-.label-character {
-    color:#FFF;
-    background-color:#811399;
+.left {
+    float:left;
+}
+.right {
+    float:right;
+}
+
+/* Sidebar */
+#searchForm {
+    width:220px;
+    padding-left: 10px;
+    margin-top: 20px;
+    width: 190px;
+}
+#sidebar {
+    width:200px;
+}
+#sidebar #tags {
+    width:180px;
+}
+#taglist {
+    padding-left: 10px
+}
+.tagC {
+    float:right;
+    margin-right:10px;
+}
+/* Content Area */
+#body {
+    margin-left: 0;
+    padding-left: 0;
+    padding-top: 20px;
+}
+#body>div {
+    padding-left: 20px;
+}
+/* Modifications to Bootstrap */
+@media (max-width: 767px) {
+    body {
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+    .hide767 {
+        display:none !important;
+    }
+    #body.rule-v-left {
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow:none;
+        border-left: 0;
+        padding-left: 0;
+    }
 }

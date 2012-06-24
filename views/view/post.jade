@@ -2,34 +2,27 @@ extends view
 
 block head
     style(type="text/css")
-        #sidebar .rule-h-bottom {width: 100%;}
         .filesize, .username {
             color:#006699;
         }
-        .statistics {
+        #statistics {
             color:#777;
-        }
-        .left {
-            float:left;
-        }
-        .right {
-            float:right;
+            padding-left:10px;
         }
         #comments table tr {
             margin-left:0;
-           margin-bottom:10px;
         }
         #comments table td {
             display:table-cell !important;
-            min-height:50px;
+            min-height:60px;
         }
         #comments table {
             margin-bottom:20px;
             padding:0;
-            padding-top: 10px;
+            overflow:hidden;
         }
         #comments {
-            padding-top: 30px;
+            padding-top: 20px;
             color:#AAA;
             margin-left: 0;
         }
@@ -70,15 +63,42 @@ block head
         }
         #comments table tbody tr:nth-child(odd) {
           background-color: #3a3a3a;
+          box-shadow:0 1px 4px rgba(200, 200, 200, 0.13) inset;
         }
         #comments table tbody tr:nth-child(even) {
           background-color: #373737;
+          box-shadow:0 1px 4px rgba(0, 0, 0, 0.13) inset;
         }
         .highlight {
             background-color: #555 !important;
         }
         #addComment textarea {
             height:100px;
+            min-width:500px;
+        }
+        .comment-info {
+            padding-top:10px;
+        }
+        @media (max-width: 767px) {
+            .span12 {
+                width: 99.99999998999999%;
+            }
+            .span2 {
+                width: 14.89361702% !important;
+            }
+            .span10 {
+                width:82.97872339599999% !important;
+            }
+            #sidebar {
+                float:right;
+                width:150px !important;
+            }
+        }
+        #image img {
+            max-height:600px;
+        }
+        .sourcelink {
+            word-break: break-word;
         }
 
 block append sidebar
@@ -90,17 +110,20 @@ block append sidebar
     - function prettyByte(a){var b=+Math.floor(Math.log(a)/Math.log(1024));return(a/Math.pow(1024,b)).toFixed(b?1:0)+" "+["n/a","bytes","kb","mb","gb"][isNaN(a)?0:b+1]};
 
     .rule-h-bottom
-    span.statistics
+    #statistics
         h3 Statistics
         span Posted #{humane_date(image.u.toISOString())} by
-            span.username &nbsp;#{image.m.u}
+            span.username &nbsp;#{image.m.u}&nbsp;
         br
         span Size:
             span.filesize #{image.m.d.w}x#{image.m.d.h} (#{prettyByte(image.m.s)})
         br
         if (image.d.length > 0)
             span Source:
-                a.sourcelink(href=image.d) #{image.d}
+                if (image.d.length > 23)
+                    a.sourcelink(href=image.d, title=image.d) #{image.d.substr(0,23)}...
+                else
+                    a.sourcelink(href=image.d, title=image.d) #{image.d}
             br
         if (typeof(image.m.r) != 'undefined')
             span Rating:
@@ -116,7 +139,7 @@ block append sidebar
 block append main
     #body.span10.rule-v-left
         #image.span12.rule-h-bottom
-            img(src=image.f, height="600px")
+            img(src=image.f)
             .imageLinks
                 a(href='#')
                     h3 Edit
@@ -183,8 +206,8 @@ block append scripts
                 }
             }
             $('#image img').click(function() {
-                if ($('#image img').attr('height') != '600px') $('#image img').attr('height', '600px')
-                else $('#image img').attr('height', '')
+                if ($('#image img').css('max-height') != '600px') $('#image img').css('max-height', '600px');
+                else $('#image img').css('max-height', 'none');
             });
             $('.reply').click(function(){
                 $('#addComment textarea').focus();

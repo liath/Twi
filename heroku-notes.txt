@@ -1,0 +1,6 @@
+Direct upload might be feasible if you set the upload path to tmp but you'd lose all upload data on restarts I think. Bad idea in any case.
+
+So assuming you don't try to use direct mode there's a few unneeded files you can delete/modify.
+-In package.json there's no need to include imagemagick.
+-direct.js
+-DO NOT remove direct.jade. It's the template for the other upload methods, they just add hooks via javascript to change the upload process.

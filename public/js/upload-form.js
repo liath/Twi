@@ -126,14 +126,14 @@ $(function(){
     $('#fileupload').fileupload();
 
     // Enable iframe cross-domain access via redirect option:
-    $('#fileupload').fileupload(
+    /*$('#fileupload').fileupload(
         'option',
         'redirect',
         window.location.href.replace(
             /\/[^\/]*$/,
             '/cors/result.html?%s'
         )
-    );
+    );*/
 
     // Load existing files:
     $('#fileupload').each(function () {
@@ -149,9 +149,6 @@ $(function(){
     $('#fileupload').bind('fileuploadcompleted', function (e, data) {
         var t = setTimeout("delayFix()", 1000);
     });
-    /*$('#fileupload').bind('fileuploadadded', function (e, data) {
-        //console.log(data);
-    });*/
 
 });
 

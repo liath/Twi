@@ -4,7 +4,7 @@ block body
     link(rel='stylesheet', href='/css/jquery.fileupload-ui.css')
     style
         .btn {margin-right:4px;}
-        #body   {margin-top:20px;}
+        #body   {margin: 20px auto 0;}
         .table-striped tbody tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
             background-color: #393939;
         }
@@ -202,13 +202,3 @@ block scripts
     //The XDomainRequest Transport is included for cross-domain file deletion for IE8+
     //if gte IE 8
         script(src="js/cors/jquery.xdr-transport.js")
-
-    script
-        //Don't hate me for this XD
-        /*Typeahead.prototype.select = function() {
-            var val = this.$menu.find('.active').attr('data-value')
-            this.$element
-                .val(this.updater(val))
-                .change()
-            return this.hide()
-        }*/
