@@ -118,7 +118,7 @@ block append sidebar
         span Size:
             span.filesize #{image.m.d.w}x#{image.m.d.h} (#{prettyByte(image.m.s)})
         br
-        if (image.d.length > 0)
+        if (image.d && image.d.length > 0)
             span Source:
                 if (image.d.length > 23)
                     a.sourcelink(href=image.d, title=image.d) #{image.d.substr(0,23)}...
