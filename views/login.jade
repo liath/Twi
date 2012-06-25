@@ -21,7 +21,8 @@ block content
                     form(id="signup-form", method="post", action="/s/create", autocomplete="off")
                         #username-c.control-group
                             input#s-username.input(type="text", placeholder="Username", name="username")
-                        input#s-password.input(type="password", placeholder="Password", name="password")
+                        #password-c.control-group
+                            input#s-password.input(type="password", placeholder="Password", name="password")
                         input#s-email.input(type="email", placeholder="Email", name="email")
                         input.btn(type="submit", value="Register")
             .span3
@@ -29,30 +30,59 @@ block content
     script
         $(function(){
             var sunttt;
+            var reg = /^[0-9a-z\.\-\_]+$/i;
             $('#s-username').tooltip({
                 trigger: 'manual'
             });
-           $('#s-username').blur(function() {
-                $.getJSON('/s/username/'+$('#s-username').val(), function(data) {
-                    if(data.available == true) {
-                        clearTimeout(sunttt);
-                        $('#username-c').addClass('success');
-                        $('#username-c').removeClass('error');
-                        $('#s-username').data('tooltip').options.title="Username Available";
-                        $('#s-username').tooltip('show');
-                        sunttt = setTimeout("$('#s-username').tooltip('hide')",3000);
+            $('#s-password').blur(function() {
+                if ($('#s-password').val().length < 6) {
+                    $('#password-c').removeClass('success');
+                    $('#password-c').addClass('error');
+                    $('#s-password').data('tooltip').options.title="Password needs to be at least six characters long";
+                    $('#s-password').tooltip('show');
+                    clearTimeout(sunttt);
+                    sunttt = setTimeout("$('#s-password').tooltip('hide')",3000);
+                } else {
+                    $('#s-password').data('tooltip').options.title='Pick wisely! Must be six characters long.';
+                    $('#password-c').removeClass('error');
+                    $('#password-c').addClass('success');
+                }
+            });
+            $('#s-username').blur(function() {
+                if ($('#s-username').val().length < 3) {
+                    $('#username-c').removeClass('success');
+                    $('#username-c').addClass('error');
+                    $('#s-username').data('tooltip').options.title="Usernames must be at least three characters long";
+                    $('#s-username').tooltip('show');
+                } else {
+                    if (reg.test($('#s-username').val())) {
+                        $.getJSON('/s/username/'+$('#s-username').val(), function(data) {
+                            if(data.available == true) {
+                                clearTimeout(sunttt);
+                                $('#username-c').addClass('success');
+                                $('#username-c').removeClass('error');
+                                $('#s-username').data('tooltip').options.title="Username Available";
+                                $('#s-username').tooltip('show');
+                                sunttt = setTimeout("$('#s-username').tooltip('hide')",3000);
+                            } else {
+                                clearTimeout(sunttt);
+                                $('#username-c').removeClass('success');
+                                $('#username-c').addClass('error');
+                                $('#s-username').data('tooltip').options.title="Username in use";
+                                $('#s-username').tooltip('show');
+                                sunttt = setTimeout("$('#s-username').tooltip('hide')",3000);
+                            }
+                        });
                     } else {
-                        clearTimeout(sunttt);
                         $('#username-c').removeClass('success');
                         $('#username-c').addClass('error');
-                        $('#s-username').data('tooltip').options.title="Username in use";
+                        $('#s-username').data('tooltip').options.title="Usernames can only contain letter, numbers, and ._-";
                         $('#s-username').tooltip('show');
-                        sunttt = setTimeout("$('#s-username').tooltip('hide')",3000);
                     }
-                });
-           });
-           $('#s-password').tooltip({
-                title: 'Pick wisely!'
-           });
-           $('#s-email').tooltip({title: 'For account recovery and verification.!'});
+                }
+            });
+            $('#s-password').tooltip({
+                title: 'Pick wisely! Must be six characters long.'
+            });
+            $('#s-email').tooltip({title: 'For account recovery and verification.!'});
         });

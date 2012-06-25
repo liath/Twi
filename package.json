@@ -11,7 +11,7 @@
     , "passport": ">= 0.1.8"
     , "passport-local": ">= 0.1.2"
     , "connect-flash": ">= 0.1.0"
-    , "mailer": ">= 0.6.7"
+    , "nodemailer": ">= 0.3.2"
     , "minimatch": ">= 0.2.4"
     , "imagemagick": ">= 0.1.2"
   }, "engines": {
