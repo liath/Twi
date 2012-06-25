@@ -1,127 +1,160 @@
+
+window.tags = {};
+
+function addTag(target, tag) {
+    var t = JSON.parse(target.val());
+    if (t.length == 0) t = [];
+    else {
+        var check = false;
+        t.forEach(function(i){
+            if(i.n==tag.n){check = true;}
+        });
+        if (check) return false;
+    }
+    if (typeof(tag.t) == 'undefined') t.push({'n': tag.n, 'p': tag.p});
+    else t.push({'n': tag.n, 'p': tag.p, 't': 1});
+    t = jQuery.unique(t);
+    target.val(JSON.stringify(t));
+    return true;
+}
+function addTagLabel(to, tag){
+    if (to.html().length == 0) {
+        to.append('Tags: '+genLabel(tag));
+    } else {
+        to.append(', '+genLabel(tag));
+    }
+    //Update the hook
+    dispelHook();
+}
+function dispelHook() {
+    $('.tagdispel').click(function() {
+        //If a second click gets sent for an item that's already been removed, ignore it.
+        if ($(this).parent().html() == null) return;
+
+        var form = $(this).parent().siblings('.upload-info-form');
+        var t = JSON.parse(form.children('.file-tags').val());
+        var nt = [];
+        var that = $(this);
+        t.forEach(function(i){
+            if(i.n!=that.data('tag')){nt.push(i);}
+        });
+        form.children('.file-tags').val(JSON.stringify(nt));
+        rebuildLabels(nt, $(this).parent());
+        //Update the hook
+        dispelHook();
+    });
+}
+function rebuildLabels(tags, target) {
+    if (tags.length == 0) {
+        target.html('');
+        return;
+    }
+    var newlabel = "Tags: ";
+    if (tags.length == 1) {
+        newlabel += genLabel(tags[0]);
+    } else {
+        newlabel += genLabel(tags.shift());
+        tags.forEach(function(i){
+            newlabel += ', '+genLabel(i);
+        });
+    }
+    target.html(newlabel);
+}
+function genLabel(tag) {
+    var label = '<a class="label';
+    if (typeof(tag.t) == 'undefined'){ // Only tags that haven't been created on the server should have a 't' property
+        tags.forEach(function(i){
+           if (tag.n == i.n) {
+               tag = i;
+           }
+        });
+        if (typeof(tag.m) != 'undefined' && typeof(tag.m.t) != 'undefined') {
+            label += ' label-'+tag.m.t;
+        }
+        label += '" href="/wiki/'+tag.n+'">'+tag.p+'</a><a data-tag="'+tag.n+'" class="tagdispel">&cross;</a></span>';
+    } else {
+        label += '">'+tag.p+'</a><a data-tag="'+tag.n+'" class="tagdispel">&cross;</a></span>';
+    }
+    return label;
+}
+function toTitleCase(str) { //http://stackoverflow.com/questions/196972/convert-string-to-title-case-with-javascript
+    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+}
+
+window.delayFix = function() {
+    $('.delayed').each(function() {
+        $(this).removeClass('delayed');
+        $(this).attr('src', $(this).data().imageurl);
+    });
+    //Update the hooks on EVERYTHING
+    $('.taglist').typeahead({
+        source: window.tags,
+        property: 'p',
+        onselect: function(caller, data) {
+            $('.taglist').val('');
+            if (addTag($(caller.$element).siblings('.upload-info-form').children('.file-tags'), data)) {
+                addTagLabel($(caller.$element).siblings('.tags'),data);
+            }
+        }
+    });
+    $('.taglist').keydown(function(e) {
+        if (e.keyCode == 13) {
+            if ($('.taglist').data('typeahead').shown) return;
+            var tag = {
+                p: toTitleCase($(this).val()),
+                n: $(this).val().toLowerCase().replace(/[^a-z0-9-]/g, '-'),
+                t: 1
+            }
+            $('.taglist').val('');
+            if (addTag($(this).siblings('.upload-info-form').children('.file-tags'), tag)) {
+                addTagLabel($(this).siblings('.tags'),tag);
+            }
+            return false;
+        }
+    });
+    $('.create-submit').click(function(){
+        $(this).parent().siblings('.upload-info-form').submit();
+        return false;
+    });
+    $('.upload-info-form').submit(function(e) {
+        $(e.currentTarget).parent().find('button').attr('disabled', 'disabled');
+        $(e.currentTarget).parent().append('<div class="submit-overlay"></div>')
+        var overlay = $(e.currentTarget).parent().children('.submit-overlay');
+        overlay.css({top:$(e.currentTarget).parent().parent().position().top, left: $(e.currentTarget).parent().parent().position().left, height: $(e.currentTarget).parent().parent().height(), width: $(e.currentTarget).parent().parent().width()});
+
+        var form    = $(e.currentTarget);
+        var postdata = {
+            'tags' : JSON.parse($(e.currentTarget).children('.file-tags').val()),
+            'source' : $(e.currentTarget).children('.file-source').val()
+        };
+        $.post($(e.currentTarget).attr('action'), postdata, function(data) {
+            if ($.isArray(data)) data = data[0]; //Why do we return arrays again?
+            console.log('Data from server:');
+            console.log(data);
+            $(overlay).remove();
+            var btn = '<button class="btn btn-warning right" onclick="$(this).parent().parent().remove()"><i class="icon-ban-circle icon-white"></i><span>Close</span></button>';
+            if (data.error) {
+                if (data.error == "Image already exists.") {
+                    $(form).parent().html('<span class="submitted-message">Image already exists, go here to view it: <a href="'+data.path+'">'+data.path+'</a></span>'+btn);
+                } else {
+                    $(form).parent().html('<span class="submitted-message">Error'+data.error+'</span>'+btn);
+                }
+            } else {
+                $(form).parent().html('<span class="submitted-message">Done! <a href="/post/'+data.a+'">Click here to go to the post.</a></span>'+btn);
+            }
+        }, 'json');
+        e.preventDefault();
+        return false;
+    });
+};
+
 $(function(){
     'use strict';
-
-    window.tags = {};
 
     $.getJSON("/s/tags", function(json) {
         window.tags = json;
     });
 
-    function addTag(target, tag) {
-        var t = JSON.parse(target.val());
-        if (t.length == 0) t = [];
-        else {
-            var check = false;
-            t.forEach(function(i){
-                if(i.n==tag.n){check = true;}
-            });
-            if (check) return false;
-        }
-        if (typeof(tag.t) == 'undefined') t.push({'n': tag.n, 'p': tag.p});
-        else t.push({'n': tag.n, 'p': tag.p, 't': 1});
-        t = jQuery.unique(t);
-        target.val(JSON.stringify(t));
-        return true;
-    }
-    function addTagLabel(to, tag){
-        var label = '';
-        if (to.html().length == 0) {
-            label = 'Tags: <span><a class="label';
-        } else {
-            label += '<span>, <a class="label';
-        }
-        if (typeof(tag.t) == 'undefined'){ // Only tags that haven't been created on the server should have a 't' property
-            if (typeof(tag.m.t) != 'undefined') {
-                label += ' label-'+tag.m.t;
-            }
-            label += '" href="/wiki/'+tag.n+'">'+tag.p+'</a><a data-tag="'+tag.n+'" class="tagdispel">&cross;</a></span>';
-        } else {
-            label += '">'+tag.p+'</a><a data-tag="'+tag.n+'" class="tagdispel">&cross;</a></span>';
-        }
-        to.append(label);
-        //Update the hook
-        $('.tagdispel').click(function() {
-            if ($(this).parent().parent().html() == null) return; //Fix weird ghosted click bug
-            var form = $(this).parent().parent().siblings('.upload-info-form');
-            var t = JSON.parse(form.children('.file-tags').val());
-            var nt = [];
-            var that = $(this);
-            t.forEach(function(i){
-                if(i.n!=that.data('tag')){nt.push(i);}
-            });
-            form.children('.file-tags').val(JSON.stringify(nt));
-            var p = $(this).parent().parent();
-            $(this).parent().remove();
-            if (p.html() == 'Tags: ') p.html('');
-        });
-    }
-    function toTitleCase(str) { //http://stackoverflow.com/questions/196972/convert-string-to-title-case-with-javascript
-        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-    }
-
-    window.delayFix = function() {
-        $('.delayed').each(function() {
-            $(this).removeClass('delayed');
-            $(this).attr('src', $(this).data().imageurl);
-        });
-        //Update the hooks on EVERYTHING
-        $('.taglist').typeahead({
-            source: window.tags,
-            property: 'p',
-            onselect: function(caller, data) {
-                $('.taglist').val('');
-                if (addTag($(caller.$element).siblings('.upload-info-form').children('.file-tags'), data)) {
-                    addTagLabel($(caller.$element).siblings('.tags'),data);
-                }
-            }
-        });
-        $('.taglist').keydown(function(e) {
-            if (e.keyCode == 13) {
-                var tag = {
-                    p: toTitleCase($(this).val()),
-                    n: $(this).val().toLowerCase().replace(/[^a-z0-9-]/g, '-'),
-                    t: 1
-                }
-                $('.taglist').val('');
-                if (addTag($(this).siblings('.upload-info-form').children('.file-tags'), tag)) {
-                    addTagLabel($(this).siblings('.tags'),tag);
-                }
-                return false;
-            }
-        });
-        $('.create-submit').click(function(){
-            $(this).parent().siblings('.upload-info-form').submit();
-            return false;
-        });
-        $('.upload-info-form').submit(function(e) {
-            $(e.currentTarget).children('button').attr('disabled', 'disabled');
-            $(e.currentTarget).parent().append('<div class="submit-overlay"></div>')
-            $(e.currentTarget).parent().children('.submit-overlay').css({top:$(e.currentTarget).parent().parent().position().top, left: $(e.currentTarget).parent().parent().position().left, height: $(e.currentTarget).parent().parent().height(), width: $(e.currentTarget).parent().parent().width()});
-            var overlay = $(e.currentTarget).parent().children('.submit-overlay');
-            var form    = $(e.currentTarget);
-            var postdata = {
-                'tags' : JSON.parse($(e.currentTarget).children('.file-tags').val()),
-                'source' : $(e.currentTarget).children('.file-source').val()
-            };
-            $.post($(e.currentTarget).attr('action'), postdata, function(data) {
-                console.log('Data from server:');
-                console.log(data);
-                $(overlay).remove();
-                var btn = '<button class="btn btn-warning right" onclick="$(this).parent().parent().remove()"><i class="icon-ban-circle icon-white"></i><span>Close</span></button>';
-                if (data.error) {
-                    if (data.error == "Image already exists.") {
-                        $(form).parent().html('<span class="submitted-message">Image already exists, go here to view it: <a href="'+data.path+'">'+data.path+'</a></span>'+btn);
-                    } else {
-                        $(form).parent().html('<span class="submitted-message">Error'+data.error+'</span>'+btn);
-                    }
-                } else {
-                    $(form).parent().html('<span class="submitted-message">Done! <a href="/post/'+data.a+'">Click here to go to the post.</a></span>'+btn);
-                }
-            }, 'json');
-            e.preventDefault();
-            return false;
-        });
-    };
     // Initialize the jQuery File Upload widget:
     $('#fileupload').fileupload();
 
@@ -207,7 +240,7 @@ $(function(){
             if (typeof this.onselect == "function")
                 this.onselect(this, val) // Liath - I modified this to pass 'this' so I can get 'this's siblings
                                          // You don't want to know what I did with 'this's siblings
-                                         // But let's just say, they are no longer with us.
+                                         // But let's just say, they are no longer 'of this world'
                                          // Do you like bannanas?
 
             return this.hide()
