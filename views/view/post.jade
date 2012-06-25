@@ -159,7 +159,7 @@ block append main
                                 td.comment-info.span2
                                     span.username #{comment.a}
                                     br
-                                    #{humane_date(comment.t.toISOString())}
+                                    | #{humane_date(comment.t.toISOString())}
                                 td.span10.comment
                                     .right.comment-actions
                                         a.reply(href="#", title="Reply", data-target=comment.i)
