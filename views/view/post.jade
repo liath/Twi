@@ -100,6 +100,17 @@ block head
         .sourcelink {
             word-break: break-word;
         }
+        #edit {
+            padding-top:20px;
+        }
+        #edit, #comment-b {
+            display:none;
+        }
+        #edit label {
+            color: #fff;
+            display:inline-block;
+        }
+
 
 block append sidebar
     - //Modified from http://www.zachleat.com/Lib/jquery/humane.js
@@ -118,7 +129,7 @@ block append sidebar
         span Size:
             span.filesize #{image.m.d.w}x#{image.m.d.h} (#{prettyByte(image.m.s)})
         br
-        if (image.d && image.d.length > 0)
+        if (image.d && image.d.length > 1)
             span Source:
                 if (image.d.length > 23)
                     a.sourcelink(href=image.d, title=image.d) #{image.d.substr(0,23)}...
@@ -127,7 +138,8 @@ block append sidebar
             br
         if (typeof(image.m.r) != 'undefined')
             span Rating:
-                span.rating #{image.m.r}
+                -var a = ['Safe', 'Questionable', 'Explicit']
+                span.rating &nbsp;#{a[image.m.r-1]}
             br
         //- I can't, for the life of me, figure out wtf the point of this is in danbooru
         //- span Score:
@@ -141,11 +153,40 @@ block append main
         #image.span12.rule-h-bottom
             img(src=image.f)
             .imageLinks
-                a(href='#')
+                a#comment-b(href='#comments', onclick="$('#comments').show(); $('#edit').hide(); $('#edit-b').show(); $('#comment-b').hide();")
+                    h3 Comments
+                a#edit-b(href='#edit', onclick="$('#comments').hide(); $('#edit').show(); $('#edit-b').hide(); $('#comment-b').show();")
                     h3 Edit
                 h3 &nbsp;|&nbsp;
                 a(href=image.f)
                     h3 Download
+        #edit.span10
+            .well.span8
+                form#editForm.form-horizontal(method="post", action="/post/"+image.a)
+                    fieldset
+                        .control-group
+                            label.control-label(for="contentRating") Content Rating
+                            .controls
+                                select#contentRating(name="contentRating")
+                                    option Safe
+                                    option Questionable
+                                    option Explicit
+                                p.help-block Explicit tags include any sexual body parts and acts.
+                        .control-group
+                            label.control-label(for="source") Source
+                            .controls
+                                input#source(type="text", name="source")
+                        .control-group
+                            label.control-label(for="tags") Tags
+                            .controls
+                                textarea#tags.span10(name="tags")
+                                    - each tag in tags
+                                        | #{tag.p+", "}
+                                p.help-block Tags must be comma separated
+                        .control-group
+                            .controls
+                                button.btn.btn-primary(type="submit") Save changes
+
         #comments.span10
             if (image.c.length > 0)
 

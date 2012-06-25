@@ -32,7 +32,7 @@ body {
 
 /* Globals */
 #content {
-    padding-left:0px;
+    padding:0;
 }
 
 .rule-v-left {
@@ -83,7 +83,7 @@ body {
 #sidebar {
     width:200px;
 }
-#sidebar #tags {
+#sidebar #search {
     width:180px;
 }
 #taglist {
