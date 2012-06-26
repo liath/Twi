@@ -8,6 +8,17 @@
  *
  * TODO: Make all uploads hit this before offloading them to storage so we can do an md5 check. Pretty sure I'll
  * have to do that anyways to implement AWS support and I dislike having my imgur key out in the open.
+ *
+ * TODO: Make view count only increase on unique ip or something
+ * This can be as simple as storing a cookie and only counting views from cookieless browsers
+ * To as wildly complex as arrays of bloom filters tracking unique ip addresses for every image
+ * Perhaps even use google analytics to track it for us and occasionally query them for the count...
+ *
+ * TODO: On the note of view counts, if we leave them as is we should prolly pool them then update them from cron so
+ * we arent spawning a database call for every image load for something so trivial
+ *
+ * TODO: Finish the voting system on posts, prolly be some quick ajax
+ *
  */
 
 // Configuration

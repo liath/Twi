@@ -109,6 +109,10 @@ block head
         #sidebar {
             min-width:200px;
         }
+        #body > div {
+            padding-left: 20px;
+            min-width: 600px;
+        }
 
 block append sidebar
     - //Modified from http://www.zachleat.com/Lib/jquery/humane.js
@@ -139,10 +143,18 @@ block append sidebar
                 -var a = ['Safe', 'Questionable', 'Explicit']
                 span.rating &nbsp;#{a[image.m.r-1]}
             br
-        //- I can't, for the life of me, figure out wtf the point of this is in danbooru
-        //- span Score:
-        //-     span.badge #{image.r}
-        //- br
+        span Score:
+            span.badge #{image.s}
+            if board.authenticated
+                span.right
+                    |Vote:&nbsp;
+                    a(title="Vote Up")
+                        i.icon-plus.icon-white
+                    |&nbsp;
+                    a(title="Vote Down")
+                        i.icon-minus.icon-white
+                    |&nbsp;
+        br
         span Views:
             span.badge #{image.v}
 

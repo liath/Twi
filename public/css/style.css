@@ -102,9 +102,7 @@ body {
     position: absolute;
     left: 200px;
 }
-#body>div {
-    padding-left: 20px;
-}
+
 /* Modifications to Bootstrap */
 @media (max-width: 767px) {
     body {
