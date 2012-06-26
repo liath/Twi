@@ -1,0 +1,70 @@
+extends direct
+
+block append head
+    style(type="text/css")
+        html.no-js #lockout {
+            position:absolute;
+            top:69px;
+            left:0px;
+            width:100%;
+            height:100%;
+            background-color:rgba(0,0,0,0.6);
+            color:white;
+            text-align: center;
+            padding-top:20%;
+            font-size:3em;
+        }
+        #limits {
+            text-align:center;
+            color:#fff;
+        }
+
+block append body
+    #lockout Upload on this site requires javascript to be enabled.
+    #limits The site currently only supports images, flash is turned off.
+
+block append scripts
+    script
+        $(function() {
+            $('#lockout').remove();
+
+            //Facilitate imgur upload
+            $('#fileupload').bind('fileuploadsubmit', function (e, data) {
+                var file = data.files[0];
+                if (!file || !file.type.match(/image.*/)) return;
+
+                var fd = new FormData();
+                fd.append("image", file); // Append the file
+                fd.append("key", "#{imgur}");
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "http://api.imgur.com/2/upload.json");
+                //xhr.open("POST", "/debug");
+                xhr.onload = function() {
+                    var resp = JSON.parse(xhr.responseText);
+                    console.log('Imgur resp:');
+                    console.log(resp);
+                    var upload = {
+                        files : [{
+                            name   : file.name,
+                            size   : file.size,
+                            width  : resp.upload.image.width,
+                            height : resp.upload.image.height,
+                            type   : resp.upload.image.type,
+                            links  : resp.upload.links,
+                            hash   : resp.upload.image.hash
+                        }]
+                    }
+                    $.post('/u/create', upload, function(reply) {
+                        console.log('Data from server:');
+                        console.log(reply);
+
+                        data.result = reply;
+
+                        var f = $('#fileupload').data('fileupload').options.done;
+                        f.call($('#fileupload'), e, data);
+                    }, 'json');
+                }
+                xhr.send(fd);
+                return false;
+            });
+        });

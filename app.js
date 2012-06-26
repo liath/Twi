@@ -21,7 +21,7 @@
  *
  */
 
-// Configuration
+// Load configuration
 var options = require('./settings.js');
 options.version = 'v0.0.2';
 
@@ -50,8 +50,6 @@ if (options.upload.method == "direct") {
         , crypto = require('crypto')
         , minimatch = require("minimatch");
 }
-
-// Configuration
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
@@ -136,6 +134,9 @@ passport.deserializeUser(function(id, done) {
         done(err, user);
     });
 });
+
+//Global items
+var tagRegex = /^[0-9a-z_\(\)-]+$/i;
 
 //Template globals
 app.locals.use(function(req, res, done) {
@@ -278,8 +279,7 @@ app.post('/s/comment/:id', function(req, res) {
 
 //Post index
 app.get('/post', function(req, res){
-    imageProvider.getIndexPage(1, 30, function(error, images) {
-        if (images == null) var images = [];
+    var respond = function(images, res) {
         var tags = [];
         for( var i =0;i< images.length;i++ ) {
             for( var j =0;j< images[i].t.length;j++ ) {
@@ -287,6 +287,7 @@ app.get('/post', function(req, res){
             }
         }
         tagProvider.getInfo(tags, function(error, tagdata) {
+
             if (!tagdata) tagdata = [];
             res.render('view/posts.jade', {
                 active: 'post',
@@ -294,7 +295,23 @@ app.get('/post', function(req, res){
                 tags: tagdata
             })
         });
-    });
+    }
+    if (req.query.tags) {
+        var tags = req.query.tags.split(' ');
+        var query = [];
+        for( var i =0;i< tags.length;i++ ) {
+            if (tagRegex.test(tags[i])) query.push(tags[i]);
+        }
+        imageProvider.getByTags(query, 1, 30, function(error, images) {
+            if (images == null) var images = [];
+            respond(images, res);
+        });
+    } else {
+        imageProvider.getIndexPage(1, 30, function(error, images) {
+            if (images == null) var images = [];
+            respond(images, res);
+        });
+    }
 });
 
 // ----------------------------------------------------------------------------------------------- User Account Routes
@@ -363,9 +380,9 @@ app.get('/upload', function(req, res) {
     if (!req.isAuthenticated()) {
         req.flash('error', 'You must be logged in to upload.');
     }
-    res.render('includes/upload/'+options.upload.method+'.jade', {
-        active: 'upload'
-    });
+    var data = {active: 'upload'};
+    if (options.upload.method == "imgur") data.imgur = options.upload.imgur;
+    res.render('includes/upload/'+options.upload.method+'.jade', data);
 });
 
 //Fixes odd bug in the upload form

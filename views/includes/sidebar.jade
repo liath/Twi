@@ -6,9 +6,9 @@ mixin sidebar(tags)
             a.tag(href='/wiki/show/'+tag.n) ?
             |&nbsp;
             if tag.m && tag.m.t
-                a(class='tag tag-type-'+tag.m.t, href='/post/show/?tags='+tag.n)= tag.p
+                a(class='tag tag-type-'+tag.m.t, href='/post/?tags='+tag.n)= tag.p
             else
-                a.tag(href='/post/show/tags='+tag.n)= tag.p
+                a.tag(href='/post/?tags='+tag.n)= tag.p
             |&nbsp;
             span.tagC.badge.badge-info= tag.c
             br
