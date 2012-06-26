@@ -1,0 +1,40 @@
+// Copy this file to settings.js then edit it.
+
+var settings = {
+    //Database info (Currently that means MongoDB)
+    database: {
+        name: 'twi'
+        , host: '127.0.0.1'
+        , port: 27017
+        , user: 'twi' //Some mongo setups won't require authentication. Not sure if you need to as well. Prolly will.
+        , pass: 'Nxd6997epntzyxaX'
+    }
+    //How many images appear in the list page (/post)
+    , resultsPerPage: 15
+    //Mail settings, SMTP auth. See https://github.com/andris9/Nodemailer for more
+    //I'm using gmail so that's what everything is configured for
+    , mail : {
+        service: "Gmail"
+        , user: 'example@gmail.com'
+        , pass: 'password'
+    },
+    upload: {
+        method : 'imgur', // Valid options are imgur and direct
+
+        //Only required if you use the imgur method
+        imgur : "",
+
+        //Only required if you use the direct method
+        paths: {
+            temp: './uploads/',
+            store: './public/images/',
+            serve: '/images/'
+        }
+    },
+    // Site name. It appears on the index page and at the top left of every other page
+    name: 'Twibooru',
+    //Domain the site runs from. Currently only used for emailing users.
+    domain: "twibooru.herokuapp.com"
+};
+
+module.exports = settings;
