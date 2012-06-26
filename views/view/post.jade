@@ -89,10 +89,6 @@ block head
             .span10 {
                 width:82.97872339599999% !important;
             }
-            #sidebar {
-                float:right;
-                width:150px !important;
-            }
         }
         #image img {
             max-height:600px;
@@ -110,7 +106,9 @@ block head
             color: #fff;
             display:inline-block;
         }
-
+        #sidebar {
+            min-width:200px;
+        }
 
 block append sidebar
     - //Modified from http://www.zachleat.com/Lib/jquery/humane.js
