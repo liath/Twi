@@ -15,6 +15,6 @@
     , "minimatch": ">= 0.2.4"
     , "imagemagick": ">= 0.1.2"
   }, "engines": {
-	"node": "0.6.x"
+	"node": "0.8.x"
   }
 }

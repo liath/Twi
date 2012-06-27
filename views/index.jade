@@ -63,7 +63,8 @@ block content
                             button.btn(type="submit")
                                 <i class="icon-search"></i>
                     h3#count= count
-                #lower.well Serving #{count} posts - Running Twi-#{board.version}
+                #lower.well Serving #{count} posts - Running&nbsp;
+                    a(href="https://github.com/Liath/Twi") Twi-#{board.version}
 
             .span3
         - if (board.flash.length > 0) {

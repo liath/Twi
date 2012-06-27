@@ -21,6 +21,8 @@ block append scripts
 
             //Facilitate imgur upload
             $('#fileupload').bind('fileuploadsubmit', function (e, data) {
+                $(data.context).css('cursor', 'progress');
+                $(data.context).find('button').attr('disabled', 'disabled');
                 var file = data.files[0];
                 if (!file || !file.type.match(/image.*/)) return;
 
@@ -50,7 +52,7 @@ block append scripts
                         console.log(reply);
 
                         data.result = reply;
-
+                        $(data.context).css('cursor', 'auto');
                         var f = $('#fileupload').data('fileupload').options.done;
                         f.call($('#fileupload'), e, data);
                     }, 'json');

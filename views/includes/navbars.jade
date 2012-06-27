@@ -1,21 +1,25 @@
 mixin navbar(active, categories)
     - each category in categories
-            - if (active == category.t)
+            - if (category.t == 'divider')
+                li
+                    a |
+            - else if (active == category.t)
                 li.active
-                    a(href="/"+category.t+"/")!= category.n
+                    a(href="/"+category.t)!= category.n
             - else
                 li
-                    a(href="/"+category.t+"/")!= category.n
+                    a(href="/"+category.t)!= category.n
 
 mixin mainnav(active, loggedin)
-    - if(loggedin) categories = [{t: 'logout',n: 'Logout'}];
-    - else categories = [{t: 'login',n: 'Login/Signup'}];
-    - categories = categories.concat([{t: 'post',n: 'Posts'},{t: 'comment',n: 'Comments'},{t: 'note',n: 'Notes'},{t: 'artist',n: 'Artists'},{t: 'tag',n: 'Tags'},{t: 'wiki',n: 'Wiki'},{t: 'more',n: '&#187;'}]);
+    - if(loggedin) categories = [{t: 'logout/',n: 'Logout'}];
+    - else categories = [{t: 'login/',n: 'Login/Signup'}];
+    - categories = categories.concat([{t: 'post/',n: 'Posts'},{t: 'comment/',n: 'Comments'},{t: 'note/',n: 'Notes'},{t: 'artist/',n: 'Artists'},{t: 'tag/',n: 'Tags'},{t: 'wiki/',n: 'Wiki'},{t: 'more/',n: '&#187;'}]);
     mixin navbar(active, categories)
 
 mixin postsnav(active)
-    - categories = [{t: 'post', n: 'List'},{t: 'upload', n: 'Upload'},{t: 'favorites', n: 'Favorites'},{t: 'subscriptions', n: 'Subscriptions'},{t: 'popular', n: 'Popular'},{t: 'random', n: 'Random'},{t: 'changes', n: 'Recent changes'},{t: 'approvals', n: 'Recent approvals'}];
+    - categories = [{t: 'post/', n: 'List'},{t: 'upload/', n: 'Upload'},{t: 'favorites/', n: 'Favorites'},{t: 'subscriptions/', n: 'Subscriptions'},{t: 'popular/', n: 'Popular'},{t: 'random/', n: 'Random'},{t: 'changes/', n: 'Recent changes'},{t: 'approvals/', n: 'Recent approvals'}];
     mixin navbar(active, categories)
 
-mixin wikinav(active)
-    - categories = [];
+mixin wikinav(active, tag)
+    - categories = [{t: 'wiki/', n: 'List'}, {t: 'wiki/create/', n: 'New'}, {t: 'help/wiki/', n: 'Help'}, {t: 'divider'},{t: 'post/?tags='+tag.n, n: 'Posts for '+tag.p+' <span class="badge badge-info">'+tag.c+'</span>'}, {t: 'wiki/edit/'+tag.n, n: 'Edit'}, {t: 'wiki/history/'+tag.n, n: 'History'}];
+    mixin navbar(active, categories)

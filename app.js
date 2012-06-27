@@ -292,7 +292,7 @@ app.get('/post', function(req, res){
         tagProvider.getInfo(tags, function(error, tagdata) {
             if (!tagdata) tagdata = [];
             res.render('view/posts.jade', {
-                active: 'post',
+                active: 'post/',
                 images: images,
                 tags: tagdata
             })
@@ -317,14 +317,14 @@ app.get('/post', function(req, res){
 });
 
 // View -------------------------------------------------------------------------------------------------- Wiki Routes
-app.get(/^\/wiki\/([0-9a-z_\(\)-]+)(?:\/(.*))?/, function(req, res) {
+app.get(/^\/wiki\/view\/([0-9a-z_\(\)-]+)(?:\/(.*))?/, function(req, res) {
     tagProvider.getInfo(req.param(0), function(error, tagdata) {
         var tag = tagdata[0];
         if (typeof(tag) != "undefined") {
             imageProvider.getByTags([tag.n], 1, 10, function(error, images) {
                 if (images == null) var images = [];
-                res.render('view/wiki.jade', {
-                    active: 'wiki',
+                res.render('view/wiki/view.jade', {
+                    active: 'wiki/',
                     recent: images,
                     tag: tag,
                     tags: [] //In other *boorus this is a list of recently changed wiki pages - I'll get around to that
@@ -340,7 +340,7 @@ app.get(/^\/wiki\/([0-9a-z_\(\)-]+)(?:\/(.*))?/, function(req, res) {
 // ----------------------------------------------------------------------------------------------- User Account Routes
 app.get('/login', function(req, res){
     res.render('login.jade', {
-        active: 'login'
+        active: 'login/'
     })
 });
 app.post('/login',
@@ -400,7 +400,7 @@ app.get('/logout', function(req, res){
 
 //------------------------------------------------------------------------------------------------------- Upload routes
 app.get('/upload', function(req, res) {
-    var data = {active: 'upload'};
+    var data = {active: 'upload/'};
     if (options.upload.method == "imgur") data.imgur = options.upload.imgur;
     res.render('includes/upload/'+options.upload.method+'.jade', data);
 });
