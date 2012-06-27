@@ -29,6 +29,9 @@ body {
 .flash {
     box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
 }
+#body {
+    color:#fff;
+}
 
 /* Globals */
 #content {

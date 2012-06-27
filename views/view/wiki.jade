@@ -1,0 +1,45 @@
+extends view
+
+block head
+    style(type="text/css")
+        #body {
+            padding-left: 20px;
+        }
+        .thumbnail {
+            max-width:150px;
+            max-height:150px;
+            display:block;
+        }
+        .gallerylink {
+            margin:0 auto;
+        }
+        .thumbnail:hover {
+            box-shadow: 1px 1px 10px rgba(0,150,200,0.7);
+        }
+        .imageholder {
+            text-align:center;
+            margin-left:0 !important;
+        }
+        .imageholder span {
+            display:inline-block;
+            margin:0 auto;
+        }
+
+block append main
+    #body.span10.rule-v-left
+        h2 #{tag.p}
+        #description
+            if (tag.d == "")
+                p No description is available yet, how about you add one?
+            else
+                p #{tag.d}
+        if (tag.a.length > 0)
+            #aliases This tag has the following aliases:
+                - each item in tag.a
+                    | item
+        #recent
+            h3 Recent Posts
+            - each image in recent
+                div.span2.imageholder
+                    span
+                        mixin imageMangle(image)

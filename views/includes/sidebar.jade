@@ -1,9 +1,9 @@
 mixin sidebar(tags)
-    form#searchForm.rule-h-bottom(action='/post/index', method="get")
-        input#search(type='search', placeholder='Search Posts', class="span12")
+    form#searchForm.rule-h-bottom(action='/post/', method="get")
+        input#search(name="tags", type='search', placeholder='Search Posts', class="span12")
     #taglist
         - each tag in tags
-            a.tag(href='/wiki/show/'+tag.n) ?
+            a.tag(href='/wiki/'+tag.n) ?
             |&nbsp;
             if tag.m && tag.m.t
                 a(class='tag tag-type-'+tag.m.t, href='/post/?tags='+tag.n)= tag.p

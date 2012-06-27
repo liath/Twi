@@ -15,9 +15,11 @@
  * Perhaps even use google analytics to track it for us and occasionally query them for the count...
  *
  * TODO: On the note of view counts, if we leave them as is we should prolly pool them then update them from cron so
- * we arent spawning a database call for every image load for something so trivial
+ * we aren't spawning a database call for every image load for something so trivial
  *
  * TODO: Finish the voting system on posts, prolly be some quick ajax
+ *
+ * TODO: Keep track of x number of recent wiki/tag changes
  *
  */
 
@@ -137,6 +139,7 @@ passport.deserializeUser(function(id, done) {
 
 //Global items
 var tagRegex = /^[0-9a-z_\(\)-]+$/i;
+var aUnique = function(a){var b={},c,d=a.length,e=[];for(c=0;c<d;c+=1)b[a[c]]=a[c];for(c in b)e.push(b[c]);return e;}; //Make unique
 
 //Template globals
 app.locals.use(function(req, res, done) {
@@ -171,8 +174,7 @@ app.get('/', function(req, res){
     });
 });
 
-// ------------------------------------------------------------------------------------------------------- Post routes
-//View post
+// View post --------------------------------------------------------------------------------------------- Post routes
 app.get(/^\/post\/([a-zA-Z0-9]+)(?:\/(.*))?/, function(req, res) {
     imageProvider.getImage(req.params[0], function(error, result) {
         if (error) {
@@ -277,7 +279,7 @@ app.post('/s/comment/:id', function(req, res) {
     res.redirect('/post/'+req.param('id'));
 });
 
-//Post index
+//Post index and search
 app.get('/post', function(req, res){
     var respond = function(images, res) {
         var tags = [];
@@ -286,8 +288,8 @@ app.get('/post', function(req, res){
                 tags.push(images[i].t[j]);
             }
         }
+        tags = aUnique(tags);
         tagProvider.getInfo(tags, function(error, tagdata) {
-
             if (!tagdata) tagdata = [];
             res.render('view/posts.jade', {
                 active: 'post',
@@ -302,16 +304,37 @@ app.get('/post', function(req, res){
         for( var i =0;i< tags.length;i++ ) {
             if (tagRegex.test(tags[i])) query.push(tags[i]);
         }
-        imageProvider.getByTags(query, 1, 30, function(error, images) {
+        imageProvider.getByTags(query, 1, options.resultsPerPage, function(error, images) {
             if (images == null) var images = [];
             respond(images, res);
         });
     } else {
-        imageProvider.getIndexPage(1, 30, function(error, images) {
+        imageProvider.getIndexPage(1, options.resultsPerPage, function(error, images) {
             if (images == null) var images = [];
             respond(images, res);
         });
     }
+});
+
+// View -------------------------------------------------------------------------------------------------- Wiki Routes
+app.get(/^\/wiki\/([0-9a-z_\(\)-]+)(?:\/(.*))?/, function(req, res) {
+    tagProvider.getInfo(req.param(0), function(error, tagdata) {
+        var tag = tagdata[0];
+        if (typeof(tag) != "undefined") {
+            imageProvider.getByTags([tag.n], 1, 10, function(error, images) {
+                if (images == null) var images = [];
+                res.render('view/wiki.jade', {
+                    active: 'wiki',
+                    recent: images,
+                    tag: tag,
+                    tags: [] //In other *boorus this is a list of recently changed wiki pages - I'll get around to that
+                })
+            });
+        } else {
+            req.flash('error', 'That tag doesn\'t exist.');
+            res.redirect('/wiki/');
+        }
+    });
 });
 
 // ----------------------------------------------------------------------------------------------- User Account Routes
@@ -377,9 +400,6 @@ app.get('/logout', function(req, res){
 
 //------------------------------------------------------------------------------------------------------- Upload routes
 app.get('/upload', function(req, res) {
-    if (!req.isAuthenticated()) {
-        req.flash('error', 'You must be logged in to upload.');
-    }
     var data = {active: 'upload'};
     if (options.upload.method == "imgur") data.imgur = options.upload.imgur;
     res.render('includes/upload/'+options.upload.method+'.jade', data);
