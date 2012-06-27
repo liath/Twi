@@ -1,5 +1,8 @@
 extends view
 
+block nav
+    mixin postsnav('post')
+
 block head
     style(type="text/css")
        .thumbnail {
@@ -24,6 +27,7 @@ block head
         #body {
             padding-left: 20px;
         }
+
 block append main
     #body.span10.rule-v-left
         - each image in images

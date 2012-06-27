@@ -2,6 +2,10 @@ extends layout
 
 block content
     style(type="text/css")
+        html {
+            height:100%;
+            overflow:hidden;
+        }
         body {
             color:#FFF;
         }
@@ -28,6 +32,14 @@ block content
         }
         #count {
             color:#811399;
+        }
+        #swag {
+            position:absolute;
+            bottom: 20%;
+            font-size:3em;
+            text-align:center;
+            left:50%;
+            margin-left:-230px;
         }
     .container
         .row-fluid
@@ -58,3 +70,9 @@ block content
             - each flash in board.flash
                 div(class="alert alert-"+flash.type)= flash.message
         - }
+        #swag Now with 20% more swag.
+
+block append scripts
+    script(type="text/javascript", src="/js/discord.js")
+    script(type="text/javascript")
+        $(function(){$('html').discord({ speed : 900, workers : 4, randomness : 2000})});
