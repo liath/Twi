@@ -41,6 +41,10 @@ var express = require('express')
   , nodemailer = require("nodemailer")
   , flash = require('connect-flash');
 
+if  (options.redis) {
+    var RedisStore = require("connect-redis")(express);
+}
+
 var app = module.exports = express.createServer();
 
 
@@ -53,24 +57,71 @@ if (options.upload.method == "direct") {
         , minimatch = require("minimatch");
 }
 
-app.configure(function(){
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
+app.configure('all', function(){
+    app.set('views', __dirname + '/views');
+    app.set('view engine', 'jade');
 
-  app.use(express.bodyParser(
+    app.use(express.bodyParser(
       {
         uploadDir: ((options.upload.method == "direct") ? options.upload.paths.temp : null)
       }
-  ));
+    ));
 
-  app.use(express.methodOverride());
-  app.use(express.cookieParser("twibooru wut"));
-  app.use(express.session());
-  app.use(flash());
-  app.use(passport.initialize());
-  app.use(passport.session());
-  app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
+    app.use(express.methodOverride());
+    app.use(express.cookieParser(options.sessionKey));
+
+    if  (options.redis) {
+        if (app.settings.env == 'production') {
+            var conf = {
+                h: false, //Host
+                t: false, //Port
+                d: false, //Db
+                s: false  //Pass
+            }
+            if (process.env.REDISTOGO_URL) {
+                var url = require('url'),
+                    redisUrl = url.parse(process.env.REDISTOGO_URL),
+                    redisAuth = redisUrl.auth.split(':');
+                conf.h = redisUrl.hostname;
+                conf.t = redisUrl.port;
+                conf.d = redisAuth[0];
+                conf.s = redisAuth[1];
+            } else if (options.redis.host) {
+                conf.h = options.redis.host;
+                conf.t = options.redis.port;
+                conf.d = options.redis.db;
+                conf.s = options.redis.pass;
+            }
+            app.use(express.session({
+                store: new RedisStore({
+                    host : conf.h,
+                    port : conf.t,
+                    db   : conf.d,
+                    pass : conf.s
+                })
+            }));
+        } else {
+            if (options.redis && options.redis.host) {
+                app.use(express.session({
+                    store: new RedisStore({
+                        host : options.redis.host,
+                        port : options.redis.port,
+                        db   : options.redis.db,
+                        pass : options.redis.pass
+                    })
+                }));
+            } else {
+                app.use(express.session({ store: new RedisStore }));
+            }
+        }
+    } else {
+        app.use(express.session());
+    }
+    app.use(flash());
+    app.use(passport.initialize());
+    app.use(passport.session());
+    app.use(app.router);
+    app.use(express.static(__dirname + '/public'));
 });
 
 app.configure('development', function(){
@@ -85,7 +136,7 @@ app.configure('production', function(){
 var db = new Db(options.database.name, new Server(options.database.host, options.database.port, {auto_reconnect: true}, {}));
 db.open(function(error){
     db.authenticate(options.database.user, options.database.pass, function(error, result) {
-        if (error) console.log(error);
+        if (error) console.log('DB Auth Error (app.js:86)'+error);
         var getUniqueId = function(){
             var rand=0;
             while(true){
@@ -158,8 +209,10 @@ app.locals.use(function(req, res, done) {
         error : req.flash('error'),
         info : req.flash('info')
     };
+
+    //
     for( var i =0;i< res.locals.board.flash.length;i++ ) {
-        console.log(res.locals.board.flash[i]);
+        console.log('FlashMsg Error: '+res.locals.board.flash[i]);
     }
     res.locals.board.uploadMethod = options.upload.method;
     done();
@@ -244,13 +297,13 @@ app.post(/^\/post\/([a-zA-Z0-9]+)(?:\/(.*))?/, function(req, res) {
 
                 imageProvider.update(image._id, update, function(error, result) {
                     if (error) {
-                        console.log(error);
+                        console.log('Image Edit Error (app.js:249): '+error);
                         req.flash('error', req.flash('info', 'Changes applied successfully!'));
                     } else {
                         req.flash('info', 'Changes applied successfully!');
 
                         //Do a rebuild on tags now
-                        tagProvider.rebuildCount(function(error, result){console.log(error);});
+                        tagProvider.rebuildCount(function(error, result){console.log('Tag Rebuild Error (app.js:255): '+error);});
                         tagProvider.current = false;
                     }
                     res.redirect('/post/'+id);
@@ -365,7 +418,7 @@ app.post('/s/create', function(req, res){
             }
             smtpT.sendMail(email, function(error, resp) {
                 if(error){
-                    console.log(error);
+                    console.log('Mail Error (app.js:370):'+error);
                     req.flash('error', error);
                     res.redirect('/login');
                 } else {
@@ -384,7 +437,7 @@ app.get('/s/verify/:token', function(req, res){
             res.redirect('/login');
         } else {
             userProvider.dropToken(user, function(error, result) {
-                if (error) console.log('Verify Error:'+error);
+                if (error) console.log('Verify Error (app.js:389):'+error);
                 req.flash('info', "Account verified, you may now login.");
                 res.redirect('/login');
             });
@@ -442,7 +495,7 @@ app.post('/u/create', function(req, res) {
                         });
                     } else {
                         req.session.save(function(error){
-                            if (error) console.log("Session save error: "+error);
+                            if (error) console.log("Session save error (app.js:447): "+error);
                         });
                     }
                 });
@@ -523,7 +576,7 @@ app.post('/u/insert/:name', function(req, res) {
             }
             imageProvider.submitImages([image], function(error, result) {
                 if (error) {
-                    console.log(error);
+                    console.log('Image Insert error (app.js:528):'+error);
                     res.json(error);
                 } else {
                     //submitImages supports arrays and acts as such, we'll only ever send it a single item here so we collapse its response
@@ -533,7 +586,7 @@ app.post('/u/insert/:name', function(req, res) {
                     if (!result.error) {
 
                         //Rebuild the tag table
-                        tagProvider.rebuildCount(function(error, result){console.log(error);});
+                        tagProvider.rebuildCount(function(error, result){console.log('Tag Rebuil Error (app.js:538): '+error);});
                         tagProvider.current = false;
                         //Theres got to be a more efficient way to do this
                     }
@@ -564,34 +617,15 @@ app.get('/s/tags', function(req, res){
        res.json(result);
     });
 });
-app.get('/s/rebuild', function(req, res){
+
+//Debugging routes
+/*app.get('/s/rebuild', function(req, res){
     tagProvider.rebuildCount(function(error, result){
-        console.log(error);
+        console.log('Rebuild Error (app.js:573): '+error);
         tagProvider.current = false;
         res.redirect('/s/tags');
     });
-});
-
-app.get('/s/test', function(req, res){
-    console.log(req.user);
-    res.send(' ');
-});
-
-app.post('/debug', function(req, res){
-    res.json({upload : {
-        image : {
-            hash: "1OLOL",
-            height: 900,
-            width: 900,
-            type: 'image/png'
-        },
-        links : {
-            delete_page : "/lawl",
-            large_thumbnail : '/lawl.png',
-            original : '/lol.png'
-        }
-    }});
-});
+});*/
 
 /* Uncomment if using nginx for static content.
  * app.get('*', function(req, res){
@@ -602,12 +636,12 @@ app.post('/debug', function(req, res){
 // Cron
 setInterval(function() {
     userProvider.reaper(function(error, result){
-        if (error) console.log('User Reaper Error: '+error);
+        if (error) console.log('User Reaper Error (app.js:588): '+error);
     });
 },3600000); //One hour
 
 //Boot
 var port = process.env.PORT || 3000;
 app.listen(port, function(){
-    console.log("Express server listening on port %s in %s mode", port, app.settings.env);
+    console.log("Twi booting on port %s in %s mode", port, app.settings.env);
 });

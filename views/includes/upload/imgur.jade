@@ -2,7 +2,10 @@ extends direct
 
 block append head
     style(type="text/css")
-        html.no-js .lockout {
+        #nojs-lockout {
+            display:none;
+        }
+        html.no-js #nojs-lockout {
             display:block;
         }
         #limits {
@@ -11,13 +14,13 @@ block append head
         }
 
 block append body
-    .lockout Upload on this site requires javascript to be enabled.
-    #limits The site currently only supports images, flash is turned off.
+    #nojs-lockout.lockout Upload on this site requires javascript to be enabled.
+    #limits This site currently only supports images, flash is turned off.
 
 block append scripts
     script
         $(function() {
-            $('#lockout').remove();
+            $('#nojs-lockout').remove();
 
             //Facilitate imgur upload
             $('#fileupload').bind('fileuploadsubmit', function (e, data) {

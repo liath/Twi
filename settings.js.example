@@ -1,13 +1,24 @@
 // Copy this file to settings.js then edit it.
 
+
 var settings = {
-    //Database info (Currently that means MongoDB)
+    sessionKey : "twibooru wut", //CHANGE ME FOR THE LOVE OF CERTAIN CELESTIAL GODDESSES WHO WILL GO UNNAMED HERE
     database: {
-        name: 'twi'
-        , host: '127.0.0.1'
-        , port: 27017
-        , user: 'twi' //Some mongo setups won't require authentication. Not sure if you need to as well. Prolly will.
-        , pass: 'Nxd6997epntzyxaX'
+        name: 'database-name'
+        , host: 'mongo-host.example.com'
+        , port: 33757
+        , user: 'mongo' //Some mongo setups won't require authentication. Not sure if you need to as well. Prolly will.
+        , pass: 'password'
+    }
+    /*Set redis to false to disable it completely. (, redis : false,
+                                                    , resultsPerPage : 15
+                                                    ...)*/
+    , redis : {
+        //If ENV has REDISTOGOURL it will be used instead and this will be ignored
+        host   : ''
+        , port : ''
+        , db   : ''
+        , pass : ''
     }
     //How many images appear in the list page (/post)
     , resultsPerPage: 15
@@ -15,26 +26,27 @@ var settings = {
     //I'm using gmail so that's what everything is configured for
     , mail : {
         service: "Gmail"
-        , user: 'example@gmail.com'
+        , user: 'e.yo.knighty@gmail.com'
         , pass: 'password'
     },
     upload: {
         method : 'imgur', // Valid options are imgur and direct
 
         //Only required if you use the imgur method
-        imgur : "",
+        imgur : "IMGUR ANONYMOUS API KEY",
 
         //Only required if you use the direct method
         paths: {
-            temp: './uploads/',
-            store: './public/images/',
-            serve: '/images/'
+            temp: '/tmp/', //Can be anywhere really so long as it isn't in ./public
+            store: './public/images/', //Where images are actually saved, should be left as is unless you're hosted
+                                       // somewhere that doesn't allow write access, like Heroku.
+            serve: '/images/' //url prefix for images, if store is ./public/images then the default is fine.
         }
     },
     // Site name. It appears on the index page and at the top left of every other page
-    name: 'Twibooru',
+    name: 'Really Awesome Board',
     //Domain the site runs from. Currently only used for emailing users.
-    domain: "twibooru.herokuapp.com"
+    domain: "really-awesome-board.com"
 };
 
 module.exports = settings;
