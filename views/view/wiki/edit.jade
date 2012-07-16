@@ -1,0 +1,37 @@
+extends ../view
+
+block head
+    style(type="text/css")
+        #body {
+            padding-left: 20px;
+        }
+        #body .row {
+            margin-left:0;
+        }
+        #preview-wrapper {
+            display:none;
+        }
+
+block nav
+    mixin wikinav('wiki/edit/'+tag.n, tag)
+
+block append main
+    #body.span10.rule-v-left
+        .row
+            .span6
+                h2 #{tag.p}&nbsp;(Editing)
+                #preview-wrapper.span8.well
+                    h4 Preview
+                    #preview-box
+                form#description(action="/wiki/edit/"+tag.n, method="post")
+                    textarea#description.span10(name="description") #{tag.dr}
+                    .btn-group.left
+                        input.btn.btn-success(type="submit", value="Submit")
+                        a.btn.btn-info#preview Preview
+            .span6
+                h4 Formatting Reference
+                p idk, lol
+                p URLs are automatically linked: https://google.com
+
+block append scripts
+    mixin msgfilterjs('#description textarea')

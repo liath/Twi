@@ -1,0 +1,29 @@
+//- This files provides the translation functions from formatted user messages to post data
+mixin msgfilterjs(selector, onclick)
+    script
+        $(function() {
+            /*function parseMessage(text) {
+                //Fix line breaks
+                text = text.replace(/\n/g, '<br />');
+
+                //Linkify links - http://stackoverflow.com/questions/37684/how-to-replace-plain-urls-with-links
+                var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+                text = text.replace(exp,"<a href='$1'>$1</a>");
+
+                //Linkify Replies
+                text = text.replace(/>>(\d+)/g, function(a,v) {
+                    var t = $('#c'+v+' .username').html();
+                    return '<a class="commentlink" href="#c'+v+'">@'+t+'</a>';
+                });
+
+                return text;
+            }*/
+            //Compiled form of the above
+            function parseMessage(a){a=a.replace(/\n/g,"<br />");a=a.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig,"<a href='$1'>$1</a>");return a=a.replace(/>>(\d+)/g,function(a,b){var c=$("#c"+b+" .username").html();return'<a class="commentlink" href="#c'+b+'">@'+c+"</a>"})};
+
+            $('#preview').click(function() {
+                $('#preview-box').html(parseMessage($('#{selector}').val()));
+                $('#preview-wrapper').css('display', 'block');
+                    #{onclick}
+            });
+        });

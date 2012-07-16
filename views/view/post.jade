@@ -234,25 +234,6 @@ block append main
 block append scripts
     script
         $(function() {
-            /*function parseReply(text) {
-                //Fix line breaks
-                text = text.replace(/\n/g, '<br />');
-
-                //Linkify links - http://stackoverflow.com/questions/37684/how-to-replace-plain-urls-with-links
-                var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-                text = text.replace(exp,"<a href='$1'>$1</a>");
-
-                //Linkify Replies
-                text = text.replace(/>>(\d+)/g, function(a,v) {
-                    var t = $('#c'+v+' .username').html();
-                    return '<a class="commentlink" href="#c'+v+'">@'+t+'</a>';
-                });
-
-                return text;
-            }*/
-            //Compiled form of the above
-            function parseReply(a){a=a.replace(/\n/g,"<br />");a=a.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig,"<a href='$1'>$1</a>");return a=a.replace(/>>(\d+)/g,function(a,b){var c=$("#c"+b+" .username").html();return'<a class="commentlink" href="#c'+b+'">@'+c+"</a>"})};
-
             if (window.location.hash) {
                 var match = /^#c\d+/;
                 if (match.test(window.location.hash)) {
@@ -268,21 +249,15 @@ block append scripts
                 $('#addComment textarea').val($('#addComment textarea').val()+'>>'+$(this).data('target')+' ');
                 return false;
             });
-
-            $('#preview').click(function() {
-                $('#preview-box').html(parseReply($('#addComment textarea').val()));
-                $('#preview-wrapper').css('display', 'block');
-                hooklinks();
-            });
             function hooklinks() {
                 $('.commentlink').click(function(){
                     highlight($($(this).attr('href')).focus());
                 });
             }
             hooklinks();
-
             function highlight(t) {
                 $('.highlight').removeClass('highlight');
                 t.addClass('highlight');
             }
         });
+    mixin msgfilterjs('#addComment textarea', 'hooklinks();')

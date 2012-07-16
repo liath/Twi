@@ -21,6 +21,9 @@
  *
  * TODO: Keep track of x number of recent wiki/tag changes
  *
+ * TODO: When a user looks up an expensive item we can prolly store the item in redis(session) to save a second lookup if they post to that item
+ *
+ * TODO: Make descriptions for tags use markdown
  */
 
 // Load configuration
@@ -191,6 +194,8 @@ passport.deserializeUser(function(id, done) {
 //Global items
 var tagRegex = /^[0-9a-z_\(\)-]+$/i;
 var aUnique = function(a){var b={},c,d=a.length,e=[];for(c=0;c<d;c+=1)b[a[c]]=a[c];for(c in b)e.push(b[c]);return e;}; //Make unique
+//Parse user submitted message (comments and post descriptions)
+function parseMessage(a){a=a.replace(/\n/g,"<br />");a=a.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig,"<a href='$1'>$1</a>");return a=a.replace(/>>(\d+)/g,function(a,b){var c=$("#c"+b+" .username").html();return'<a class="commentlink" href="#c'+b+'">@'+c+"</a>"})};
 
 //Template globals
 app.locals.use(function(req, res, done) {
@@ -380,7 +385,7 @@ app.get(/^\/wiki\/view\/([0-9a-z_\(\)-]+)(?:\/(.*))?/, function(req, res) {
                     active: 'wiki/',
                     recent: images,
                     tag: tag,
-                    tags: [] //In other *boorus this is a list of recently changed wiki pages - I'll get around to that
+                    tags: [] //In other *boorus this is a list of recently changed wiki pages - I'll get around to that - prolly just add a recent changes function to tagProvider
                 })
             });
         } else {
@@ -388,6 +393,46 @@ app.get(/^\/wiki\/view\/([0-9a-z_\(\)-]+)(?:\/(.*))?/, function(req, res) {
             res.redirect('/wiki/');
         }
     });
+});
+
+app.get(/^\/wiki\/edit\/([0-9a-z_\(\)-]+)(?:\/(.*))?/, function(req, res) {
+    tagProvider.getInfo(req.param(0), function(error, tagdata) {
+        var tag = tagdata[0];
+        if (typeof(tag) != "undefined") {
+                if (images == null) var images = [];
+                res.render('view/wiki/edit.jade', {
+                    active: 'wiki/',
+                    tag: tag,
+                    tags: [] //In other *boorus this is a list of recently changed wiki pages - I'll get around to that - prolly just add a recent changes function to tagProvider
+                })
+        } else {
+            req.flash('error', 'That tag doesn\'t exist.');
+            res.redirect('/wiki/');
+        }
+    });
+});
+
+app.post(/^\/wiki\/edit\/([0-9a-z_\(\)-]+)(?:\/(.*))?/, function(req, res) {
+    if (!req.isAuthenticated()) {
+        req.flash('error', 'You must be logged in to edit tags.');
+        res.redirect('/wiki/edit/'+req.param(0));
+    } else {
+        tagProvider.getInfo(req.param(0), function(error, tagdata) {
+            var tag = tagdata[0];
+            if (typeof(tag) != "undefined") {
+                tag.dr = req.body.description;
+                tag.d  = parseMessage(tag.dr);
+                tagProvider.update(tag, function(error, result){
+                    if (error) req.flash('error', error);
+                    else req.flash('info', 'Tag successfully updated.');
+                    res.redirect('/wiki/edit/'+req.param(0));
+                });
+            } else {
+                req.flash('error', 'That tag doesn\'t exist.');
+                res.redirect('/wiki/edit/'+req.param(0));
+            }
+        });
+    }
 });
 
 // ----------------------------------------------------------------------------------------------- User Account Routes
