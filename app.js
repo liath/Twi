@@ -420,6 +420,7 @@ app.post(/^\/wiki\/edit\/([0-9a-z_\(\)-]+)(?:\/(.*))?/, function(req, res) {
         tagProvider.getInfo(req.param(0), function(error, tagdata) {
             var tag = tagdata[0];
             if (typeof(tag) != "undefined") {
+                tag.do.push(tag.dr);
                 tag.dr = req.body.description;
                 tag.d  = parseMessage(tag.dr);
                 tagProvider.update(tag, function(error, result){
