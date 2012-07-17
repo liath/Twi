@@ -1,0 +1,79 @@
+extends ../view
+
+block head
+    style(type="text/css")
+        #body {
+            padding-left: 20px;
+        }
+        #body .row {
+            margin-left:0;
+        }
+        #preview-wrapper {
+            display:none;
+        }
+        .small {
+            font-size:x-small;
+        }
+        #history-list {
+            position: absolute;
+            right: 0px;
+            top: 0px;
+            padding-left:0;
+        }
+        #history-list h3 {
+            padding-bottom:0;
+        }
+        #history-list>* {
+            padding-left:10px;
+        }
+
+block nav
+    mixin wikinav('wiki/history/'+tag.n, tag)
+
+block append main
+    #body.span10.rule-v-left
+        .row
+            .span8
+                h2 #{tag.p}&nbsp;(History)
+                #history-box
+                    - if (wiki.o.length == 0)
+                        | No history yet.
+            #history-list.rule-v-left
+                h3.rule-h-bottom Revisions
+                    span.small &nbsp;(Click a timespan to hide it)
+
+
+block append scripts
+    -if (wiki.o.length > 0)
+        script(type="text/javascript", src="/js/wDiff.js")
+        script(type="text/javascript")
+            $(function() {
+                var history = JSON.parse('#{(JSON.stringify(wiki.o)).replace(/'/g, "\'").replace('\n', "\\n")}'.replace(/&quot;/g, '"'));
+                var current = JSON.parse('#{(JSON.stringify(wiki.r.m)).replace(/'/g, "\'").replace('\n', "\\n")}'.replace(/&quot;/g, '"'));
+
+                if (history.length > 0) {
+                    var l = history.length-1;
+                    $('#history-box').append('<span id="timeframe-1"><h4>Current -> '+history[l].t+'</h4>'+WDiffString(history[l].m, current))+'</span>';
+                    $('#history-list').append('<div data-frame=1 class="history-frame">Current -> '+history[l].t+'</div>')
+                    var f = 2;
+                    if (history.length > 1) {
+                        for (var i = l; i > 0; i--) {
+                            $('#history-box').append('<span id="timeframe-'+f+'"><h4>'+history[i].t+' -> '+history[i-1].t+'</h4>'+WDiffString(history[i-1].m, history[i].m))+'</span>';
+                            $('#history-list').append('<div data-frame='+f+' class="history-frame">'+history[i].t+' -> '+history[i-1].t+'</div>')
+                            ++f;
+                        }
+                    }
+                    var last = history[0];
+                    $('#history-box').append('<span id="timeframe-'+f+'"><h4>'+last.u+': Created</h4>'+WDiffString('', last.m))+'</span>';
+                    $('#history-list').append('<div data-frame='+f+' class="history-frame">Created</div>')
+                } else {
+                    $('#history-list').append('<span class="">No history.</span>')
+                }
+
+
+                $('.history-frame').toggle(function(){
+                    $('#timeframe-'+$(this).data('frame')).css('display', 'none');
+                },function() {
+                    $('#timeframe-'+$(this).data('frame')).css('display', 'block');
+                });
+            });

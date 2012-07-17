@@ -32,10 +32,10 @@ block append main
     #body.span10.rule-v-left
         h2 #{tag.p}
         #description
-            if (tag.d == "")
+            if (wiki.d == "")
                 p No description is available yet, how about you add one?
             else
-                p #{tag.d}
+                p #{wiki.d}
         if (tag.a.length > 0)
             #aliases This tag has the following aliases:
                 - each item in tag.a

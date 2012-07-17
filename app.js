@@ -24,6 +24,10 @@
  * TODO: When a user looks up an expensive item we can prolly store the item in redis(session) to save a second lookup if they post to that item
  *
  * TODO: Make descriptions for tags use markdown
+ *
+ * TODO: Move comments into their own provider, prolly even lazy load them for pages with ajax
+ *
+ * TODO: Implement tag alias searching in tagProvider on lookups
  */
 
 // Load configuration
@@ -39,6 +43,8 @@ var express = require('express')
   , ImageProvider = require('./lib/mongodb/imageProvider').ImageProvider
   , TagProvider = require('./lib/mongodb/tagProvider').TagProvider
   , UserProvider = require('./lib/mongodb/userProvider').UserProvider
+  , WikiProvider = require('./lib/mongodb/wikiProvider').WikiProvider
+  , FileProvider = require('./lib/upload/'+options.upload.method+'.js').Storage
   , passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
   , nodemailer = require("nodemailer")
@@ -49,10 +55,6 @@ if  (options.redis) {
 }
 
 var app = module.exports = express.createServer();
-
-
-var FileProvider = require('./lib/upload/'+options.upload.method+'.js').Storage;
-var fileProvider = new FileProvider(options);
 
 if (options.upload.method == "direct") {
     var fs = require('fs')
@@ -139,7 +141,7 @@ app.configure('production', function(){
 var db = new Db(options.database.name, new Server(options.database.host, options.database.port, {auto_reconnect: true}, {}));
 db.open(function(error){
     db.authenticate(options.database.user, options.database.pass, function(error, result) {
-        if (error) console.log('DB Auth Error (app.js:86)'+error);
+        if (error) console.log('DB Auth Error (app.js:142)'+error);
         var getUniqueId = function(){
             var rand=0;
             while(true){
@@ -158,6 +160,8 @@ db.open(function(error){
 var imageProvider= new ImageProvider(db, options.resultsPerPage);
 var tagProvider = new TagProvider(db);
 var userProvider = new UserProvider(db);
+var wikiProvider = new WikiProvider(db);
+var fileProvider = new FileProvider(options);
 
 var smtpT = nodemailer.createTransport("SMTP", {
     service: options.mail.service,
@@ -379,17 +383,21 @@ app.get(/^\/wiki\/view\/([0-9a-z_\(\)-]+)(?:\/(.*))?/, function(req, res) {
     tagProvider.getInfo(req.param(0), function(error, tagdata) {
         var tag = tagdata[0];
         if (typeof(tag) != "undefined") {
-            imageProvider.getByTags([tag.n], 1, 10, function(error, images) {
-                if (images == null) var images = [];
-                res.render('view/wiki/view.jade', {
-                    active: 'wiki/',
-                    recent: images,
-                    tag: tag,
-                    tags: [] //In other *boorus this is a list of recently changed wiki pages - I'll get around to that - prolly just add a recent changes function to tagProvider
-                })
+            wikiProvider.fetch(tag.n, function(error, wiki) {
+                if (error) console.log('Wiki Error (app.js:385):'+error);
+                imageProvider.getByTags([tag.n], 1, 10, function(error, images) {
+                    if (images == null) var images = [];
+                    res.render('view/wiki/view.jade', {
+                        active: 'wiki/',
+                        recent: images,
+                        wiki: wiki,
+                        tag: tag,
+                        tags: [] //In other *boorus this is a list of recently changed wiki pages - I'll get around to that - prolly just add a recent changes function to tagProvider
+                    });
+                });
             });
         } else {
-            req.flash('error', 'That tag doesn\'t exist.');
+            req.flash('error', 'That page doesn\'t exist.');
             res.redirect('/wiki/');
         }
     });
@@ -400,11 +408,15 @@ app.get(/^\/wiki\/edit\/([0-9a-z_\(\)-]+)(?:\/(.*))?/, function(req, res) {
         var tag = tagdata[0];
         if (typeof(tag) != "undefined") {
                 if (images == null) var images = [];
-                res.render('view/wiki/edit.jade', {
-                    active: 'wiki/',
-                    tag: tag,
-                    tags: [] //In other *boorus this is a list of recently changed wiki pages - I'll get around to that - prolly just add a recent changes function to tagProvider
-                })
+                wikiProvider.fetch(tag.n, function(error, wiki) {
+                    if (error) console.log('Wiki Error (app.js:410):'+error);
+                    res.render('view/wiki/edit.jade', {
+                        active: 'wiki/',
+                        wiki: wiki,
+                        tag: tag,
+                        tags: [] //In other *boorus this is a list of recently changed wiki pages - I'll get around to that - prolly just add a recent changes function to tagProvider
+                    })
+                });
         } else {
             req.flash('error', 'That tag doesn\'t exist.');
             res.redirect('/wiki/');
@@ -420,13 +432,19 @@ app.post(/^\/wiki\/edit\/([0-9a-z_\(\)-]+)(?:\/(.*))?/, function(req, res) {
         tagProvider.getInfo(req.param(0), function(error, tagdata) {
             var tag = tagdata[0];
             if (typeof(tag) != "undefined") {
-                tag.do.push(tag.dr);
-                tag.dr = req.body.description;
-                tag.d  = parseMessage(tag.dr);
-                tagProvider.update(tag, function(error, result){
-                    if (error) req.flash('error', error);
-                    else req.flash('info', 'Tag successfully updated.');
-                    res.redirect('/wiki/edit/'+req.param(0));
+                wikiProvider.fetch(tag.n, function(error, wiki) {
+                    if (wiki.r.m.length > 0) wiki.o.push(wiki.r);
+                    wiki.r = {
+                        u: req.user.u,
+                        t: new Date(),
+                        m: req.body.description.replace(/\r/g,'')
+                    }
+                    wiki.d  = parseMessage(wiki.r.m);
+                    wikiProvider.update(wiki, function(error, result){
+                        if (error) req.flash('error', error);
+                        else req.flash('info', 'Tag successfully updated.');
+                        res.redirect('/wiki/edit/'+req.param(0));
+                    });
                 });
             } else {
                 req.flash('error', 'That tag doesn\'t exist.');
@@ -434,6 +452,26 @@ app.post(/^\/wiki\/edit\/([0-9a-z_\(\)-]+)(?:\/(.*))?/, function(req, res) {
             }
         });
     }
+});
+
+app.get(/^\/wiki\/history\/([0-9a-z_\(\)-]+)(?:\/(.*))?/, function(req, res) {
+    tagProvider.getInfo(req.param(0), function(error, tagdata) {
+        var tag = tagdata[0];
+        if (typeof(tag) != "undefined") {
+            if (images == null) var images = [];
+            wikiProvider.fetch(tag.n, function(error, wiki) {
+                res.render('view/wiki/history.jade', {
+                    active: 'wiki/',
+                    wiki: wiki,
+                    tag: tag,
+                    tags: [] //In other *boorus this is a list of recently changed wiki pages - I'll get around to that - prolly just add a recent changes function to tagProvider
+                });
+            });
+        } else {
+            req.flash('error', 'That tag doesn\'t exist.');
+            res.redirect('/wiki/');
+        }
+    });
 });
 
 // ----------------------------------------------------------------------------------------------- User Account Routes

@@ -20,6 +20,12 @@ body {
     box-shadow: rgba(255, 255, 255, 0.07) 1px 0 0 inset;
     border-left: 1px solid #242424;
 }
+.rule-v-right {
+    -webkit-box-shadow: rgba(255, 255, 255, 0.07) -1px 0 0 inset;
+    -moz-box-shadow: rgba(255, 255, 255, 0.07) -1px 0 0 inset;
+    box-shadow: rgba(255, 255, 255, 0.07) -1px 0 0 inset;
+    border-right: 1px solid #242424;
+}
 .rule-h-bottom {
     -webkit-box-shadow: rgba(255, 255, 255, 0.07) 0 1px 0;
     -moz-box-shadow: rgba(255, 255, 255, 0.07) 0 1px 0;

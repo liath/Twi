@@ -11,6 +11,9 @@ block head
         #preview-wrapper {
             display:none;
         }
+        #description {
+            min-height:300px;
+        }
 
 block nav
     mixin wikinav('wiki/edit/'+tag.n, tag)
@@ -24,7 +27,7 @@ block append main
                     h4 Preview
                     #preview-box
                 form#description(action="/wiki/edit/"+tag.n, method="post")
-                    textarea#description.span10(name="description") #{tag.dr}
+                    textarea#description.span10(name="description") #{wiki.r.m}
                     .btn-group.left
                         input.btn.btn-success(type="submit", value="Submit")
                         a.btn.btn-info#preview Preview
