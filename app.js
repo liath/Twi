@@ -62,6 +62,33 @@ if (options.upload.method == "direct") {
         , minimatch = require("minimatch");
 }
 
+//Template globals
+function setupLocals() {
+    return function (req, res, next) {
+        res.locals.session = req.session;
+        res.locals.board = {
+            name    : options.name,
+            domain  : options.domain,
+            version : options.version
+        };
+        res.locals.board.authenticated = false;
+        if (req.isAuthenticated()) {
+            res.locals.board.authenticated = true;
+            res.locals.board.user = req.user;
+        }
+        res.locals.board.flash = {
+            error : req.flash('error'),
+            info : req.flash('info')
+        };
+
+        for( var i =0;i< res.locals.board.flash.length;i++ ) {
+            console.log('FlashMsg Error: '+res.locals.board.flash[i]);
+        }
+        res.locals.board.uploadMethod = options.upload.method;
+
+        next();
+    }
+}
 app.configure('all', function(){
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
@@ -125,6 +152,8 @@ app.configure('all', function(){
     app.use(flash());
     app.use(passport.initialize());
     app.use(passport.session());
+    app.use(setupLocals());
+    
     app.use(app.router);
     app.use(express.static(__dirname + '/public'));
 });
@@ -201,35 +230,10 @@ var aUnique = function(a){var b={},c,d=a.length,e=[];for(c=0;c<d;c+=1)b[a[c]]=a[
 //Parse user submitted message (comments and post descriptions)
 function parseMessage(a){a=a.replace(/\n/g,"<br />");a=a.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig,"<a href='$1'>$1</a>");return a=a.replace(/>>(\d+)/g,function(a,b){var c=$("#c"+b+" .username").html();return'<a class="commentlink" href="#c'+b+'">@'+c+"</a>"})};
 
-//Template globals
-app.locals.use(function(req, res, done) {
-    res.locals.session = req.session;
-    res.locals.board = {
-        name    : options.name,
-        domain  : options.domain,
-        version : options.version
-    };
-    res.locals.board.authenticated = false;
-    if (req.isAuthenticated()) {
-        res.locals.board.authenticated = true;
-        res.locals.board.user = req.user;
-    }
-    res.locals.board.flash = {
-        error : req.flash('error'),
-        info : req.flash('info')
-    };
-
-    //
-    for( var i =0;i< res.locals.board.flash.length;i++ ) {
-        console.log('FlashMsg Error: '+res.locals.board.flash[i]);
-    }
-    res.locals.board.uploadMethod = options.upload.method;
-    done();
-});
-
 // Routes
 app.get('/', function(req, res){
     imageProvider.getCount(function(error, count) {
+
         res.render('index.jade', {
             count: count
         });
