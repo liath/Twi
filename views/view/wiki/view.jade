@@ -30,19 +30,25 @@ block nav
 
 block append main
     #body.span10.rule-v-left
-        h2 #{tag.p}
-        #description
-            if (wiki.d == "")
-                p No description is available yet, how about you add one?
-            else
-                p #{wiki.d}
-        if (tag.a.length > 0)
-            #aliases This tag has the following aliases:
-                - each item in tag.a
-                    | item
-        #recent
-            h3 Recent Posts
-            - each image in recent
-                div.span2.imageholder
-                    span
-                        mixin imageMangle(image)
+
+        -if (typeof(tag) === 'undefined')
+            h4
+                a(href="/wiki/add/") Page doesn't exist, click here to create.
+        -else
+            h2 #{wiki.p}
+            #description
+                if (wiki.d == "")
+                    p No description is available yet, how about you add one?
+                else
+                    p #{wiki.d}
+            - if (wiki.t == 1)
+                if (tag.a.length > 0)
+                    #aliases This tag has the following aliases:
+                        - each item in tag.a
+                            | item
+                #recent
+                    h3 Recent Posts
+                    - each image in recent
+                        div.span2.imageholder
+                            span
+                                mixin imageMangle(image)

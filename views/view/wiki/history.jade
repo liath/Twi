@@ -28,13 +28,13 @@ block head
         }
 
 block nav
-    mixin wikinav('wiki/history/'+tag.n, tag)
+    mixin wikinav('wiki/history/'+wiki.n, wiki)
 
 block append main
     #body.span10.rule-v-left
         .row
             .span8
-                h2 #{tag.p}&nbsp;(History)
+                h2 #{wiki.p}&nbsp;(History)
                 #history-box
                     - if (wiki.o.length == 0)
                         | No history yet.

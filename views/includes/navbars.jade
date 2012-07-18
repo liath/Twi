@@ -20,6 +20,9 @@ mixin postsnav(active)
     - categories = [{t: 'post/', n: 'List'},{t: 'upload/', n: 'Upload'},{t: 'favorites/', n: 'Favorites'},{t: 'subscriptions/', n: 'Subscriptions'},{t: 'popular/', n: 'Popular'},{t: 'random/', n: 'Random'},{t: 'changes/', n: 'Recent changes'},{t: 'approvals/', n: 'Recent approvals'}];
     mixin navbar(active, categories)
 
-mixin wikinav(active, tag)
-    - categories = [{t: 'wiki/', n: 'List'}, {t: 'wiki/create/', n: 'New'}, {t: 'help/wiki/', n: 'Help'}, {t: 'divider'},{t: 'post/?tags='+tag.n, n: 'Posts for '+tag.p+' <span class="badge badge-info">'+tag.c+'</span>'}, {t: 'wiki/view/'+tag.n, n: 'View'}, {t: 'wiki/edit/'+tag.n, n: 'Edit'}, {t: 'wiki/history/'+tag.n, n: 'History'}];
+mixin wikinav(active, wiki)
+    - if (wiki.t == 1)
+        - categories = [{t: 'wiki/', n: 'List'}, {t: 'wiki/create/', n: 'New'}, {t: 'help/wiki/', n: 'Help'}, {t: 'divider'},{t: 'post/?tags='+wiki.n, n: 'Posts for '+wiki.p+' <span class="badge badge-info">'+wiki.c+'</span>'}, {t: 'wiki/view/'+wiki.n, n: 'View'}, {t: 'wiki/edit/'+wiki.n, n: 'Edit'}, {t: 'wiki/history/'+wiki.n, n: 'History'}];
+    - else
+        - categories = [{t: 'wiki/', n: 'List'}, {t: 'wiki/create/', n: 'New'}, {t: 'help/wiki/', n: 'Help'}, {t: 'divider'}, {t: 'wiki/view/'+wiki.n, n: 'View'}, {t: 'wiki/edit/'+wiki.n, n: 'Edit'}, {t: 'wiki/history/'+wiki.n, n: 'History'}];
     mixin navbar(active, categories)

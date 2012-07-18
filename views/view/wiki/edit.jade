@@ -16,18 +16,18 @@ block head
         }
 
 block nav
-    mixin wikinav('wiki/edit/'+tag.n, tag)
+    mixin wikinav('wiki/edit/'+wiki.n, wiki)
 
 block append main
     #body.span10.rule-v-left
         .row
             .span6
-                h2 #{tag.p}&nbsp;(Editing)
+                h2 #{wiki.p}&nbsp;(Editing)
                 #preview-wrapper.span8.well
                     h4 Preview
                     #preview-box
-                form#description(action="/wiki/edit/"+tag.n, method="post")
-                    textarea#description.span10(name="description") #{wiki.r.m}
+                form#description(action="/wiki/edit/"+wiki.n, method="post")
+                    textarea#description.span10(name="message") #{wiki.r.m}
                     .btn-group.left
                         input.btn.btn-success(type="submit", value="Submit")
                         a.btn.btn-info#preview Preview

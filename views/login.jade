@@ -12,19 +12,19 @@ block content
                     .turnways
                         h1 Login
                     form(id="login-form", method="post", action="/login/")
-                        input#username.input(type="text", placeholder="Username", name="username")
-                        input#password.input(type="password", placeholder="Password", name="password")
-                        input.btn(type="submit", value="Login")
+                        input#username.input(type="text", placeholder="Username", name="username", tabindex=1)
+                        input#password.input(type="password", placeholder="Password", name="password", tabindex=2)
+                        input.btn(type="submit", value="Login", tabindex=3)
                 #signup.span3
                     .turnways
                        h1 Signup
                     form(id="signup-form", method="post", action="/s/create", autocomplete="off")
                         #username-c.control-group
-                            input#s-username.input(type="text", placeholder="Username", name="username")
+                            input#s-username.input(type="text", placeholder="Username", name="username", tabindex=4)
                         #password-c.control-group
-                            input#s-password.input(type="password", placeholder="Password", name="password")
-                        input#s-email.input(type="email", placeholder="Email", name="email")
-                        input.btn(type="submit", value="Register")
+                            input#s-password.input(type="password", placeholder="Password", name="password", tabindex=5)
+                        input#s-email.input(type="email", placeholder="Email", name="email", tabindex=6)
+                        input.btn(type="submit", value="Register", tabindex=7)
             .span3
                 |&nbsp;
     script
