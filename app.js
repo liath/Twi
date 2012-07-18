@@ -34,7 +34,7 @@
 
 // Load configuration
 var options = require('./settings.js');
-options.version = 'v0.0.2';
+options.version = 'v0.0.4';
 
 /**
  * Module dependencies.
