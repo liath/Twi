@@ -1,0 +1,44 @@
+extends ../view
+
+block head
+    style(type="text/css")
+        #body {
+            padding-left: 20px;
+        }
+        #body .row {
+            margin-left:0;
+        }
+        #preview-wrapper {
+            display:none;
+        }
+        #description {
+            min-height:300px;
+        }
+
+block nav
+    mixin wikinav('wiki/new/', wiki)
+
+block append main
+    #body.span10.rule-v-left
+        .row
+            .span6
+                h2 Wiki (New)
+                #preview-wrapper.span12.well
+                    h4 Preview
+                    #preview-box
+                br
+                form(action="/wiki/edit/", method="post")
+                    h4 Name
+                    input(name="name")
+                    h4 Page
+                    textarea#message.span10(name="message")
+                    .btn-group.left
+                        input.btn.btn-success(type="submit", value="Submit")
+                        a.btn.btn-info#preview Preview
+            .span6
+                h4 Formatting Reference
+                p idk, lol
+                p URLs are automatically linked: https://google.com
+
+block append scripts
+    mixin msgfilterjs('#message')

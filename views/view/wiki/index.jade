@@ -1,0 +1,44 @@
+extends ../view
+
+block head
+    style(type="text/css")
+        #body {
+            padding-left: 20px;
+        }
+        .table tbody tr:hover td, .table tbody tr:hover th {
+            background-color:rgba(0,0,0,0.2);
+        }
+        .table th, .table td {
+            border-top:none;
+        }
+        .table tr {
+            border-top: 1px solid #292929;
+        }
+        .table tbody {
+            border-bottom: 1px solid #292929;
+        }
+        .table {
+            overflow:hidden;
+        }
+
+block nav
+    mixin wikinav('wiki/', wiki)
+
+block append main
+    #body.span10.rule-v-left
+        table.table.well
+            tbody
+                tr
+                    th
+                        h4 Title
+                    th
+                        h4 Last Edited
+
+                each entry in wiki
+                    tr
+                        td
+                            a(href="/wiki/view/"+entry.n) #{entry.p}
+                        td
+                            if entry.r.u
+                                =entry.r.t
+

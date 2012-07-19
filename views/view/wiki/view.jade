@@ -26,12 +26,12 @@ block head
         }
 
 block nav
-    mixin wikinav('wiki/view/'+tag.n, tag)
+    mixin wikinav('wiki/view/'+wiki.n, wiki)
 
 block append main
     #body.span10.rule-v-left
 
-        -if (typeof(tag) === 'undefined')
+        -if (typeof(wiki) === 'undefined')
             h4
                 a(href="/wiki/add/") Page doesn't exist, click here to create.
         -else

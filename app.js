@@ -30,6 +30,8 @@
  * TODO: Implement tag alias searching in tagProvider on lookups
  *
  * TODO: Find and cleanup lines marked with notes. ([!n])
+ *
+ * NOTES: Some DB functions exists across pretty much every provider, we can prolly abstract those out and just pass the collection to common function
  */
 
 // Load configuration
