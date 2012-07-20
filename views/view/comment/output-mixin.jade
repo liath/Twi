@@ -1,0 +1,36 @@
+mixin output(comments)
+    - each comment in comments
+        .comment-block.clearfix
+            .span2
+                mixin imageMangle(comment)
+            .comment-wrap.span9
+                div
+                    span.bold Date&nbsp;
+                    mixin humane_date(comment.u.toISOString())
+                    | &nbsp;
+                    span.bold User&nbsp;
+                    | #{comment.m.u}&nbsp;
+                    span.bold Rating&nbsp;
+                    -var a = ['Safe', 'Questionable', 'Explicit']
+                    | #{a[comment.m.r-1] || 'Unrated'}&nbsp;
+                    span.bold Score&nbsp;
+                    | #{comment.s}
+                    br
+                    span.bold Tags&nbsp;&nbsp;
+                    - each tag in comment.t
+                        - var name = tag.replace(/-/g, ' ').replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();})
+                        a(href="/post/?tags="+tag) #{name}
+                        | &nbsp;&nbsp;&nbsp;
+                - var apples = 5;
+                .comments.well
+                    - each entry in comment.c
+                        .row
+                            .span3
+                                span.username #{entry.a}
+                                br
+                                mixin humane_date(entry.t.toISOString())
+                            .span9
+                                span.comment-message
+                                    mixin parseMessage(entry.m, comment.c)
+                        - --apples;
+                        - if (apples == 0) break;

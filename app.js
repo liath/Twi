@@ -25,11 +25,13 @@
  *
  * TODO: Make descriptions for tags use markdown
  *
- * TODO: Move comments into their own provider, prolly even lazy load them for pages with ajax
+ * TODO: Consider lazy loading comments
  *
  * TODO: Implement tag alias searching in tagProvider on lookups
  *
  * TODO: Find and cleanup lines marked with notes. ([!n])
+ *
+ * TODO: Add quick reply to comment listings
  *
  * NOTES: Some DB functions exists across pretty much every provider, we can prolly abstract those out and just pass the collection to common function
  */
@@ -48,6 +50,7 @@ var express = require('express')
   , TagProvider = require('./lib/mongodb/tagProvider').TagProvider
   , UserProvider = require('./lib/mongodb/userProvider').UserProvider
   , WikiProvider = require('./lib/mongodb/wikiProvider').WikiProvider
+  , CommentProvider = require('./lib/mongodb/commentProvider').CommentProvider
   , FileProvider = require('./lib/upload/'+options.upload.method+'.js').Storage
   , passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
@@ -82,11 +85,12 @@ db.open(function(error){
     });
 });
 app.providers = {};
+app.providers.commentProvider = new CommentProvider(db);
+app.providers.fileProvider = new FileProvider(app.twi.options);
 app.providers.imageProvider= new ImageProvider(db, app.twi.options.resultsPerPage);
 app.providers.tagProvider = new TagProvider(db);
 app.providers.userProvider = new UserProvider(db);
 app.providers.wikiProvider = new WikiProvider(db);
-app.providers.fileProvider = new FileProvider(app.twi.options);
 
 function setup() {
     return function (req, res, next) {

@@ -1,0 +1,9 @@
+extends base
+
+block nav
+    mixin commentnav('comment/')
+
+block body
+    h2 Before commenting, render yourself in a more symbolic manner.
+    br
+    mixin output(comments)

@@ -26,3 +26,7 @@ mixin wikinav(active, wiki)
     - else
         - categories = [{t: 'wiki/', n: 'List'}, {t: 'wiki/new/', n: 'New'}, {t: 'help/wiki/', n: 'Help'}, {t: 'divider'}, {t: 'wiki/view/'+wiki.n, n: 'View'}, {t: 'wiki/edit/'+wiki.n, n: 'Edit'}, {t: 'wiki/history/'+wiki.n, n: 'History'}];
     mixin navbar(active, categories)
+
+mixin commentnav(active)
+    - categories = [{t: 'comment/', n: 'List'}, {t: 'comment/search/', n: 'Search'}, {t: 'help/comment', n: 'Help'}];
+    mixin navbar(active, categories)

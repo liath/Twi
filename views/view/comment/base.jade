@@ -1,0 +1,72 @@
+extends ../../layout
+include ../../includes/utility
+include ../../includes/tagmangler
+include output-mixin
+
+block append head
+    style(type="text/css")
+        #body {
+            left: 20px;
+        }
+        .bold {
+            font-weight:bold;
+        }
+        .comment-wrap div {
+            margin-left:0px;
+        }
+        .username {
+            font-size:1.2em;
+        }
+        .thumbnail {
+            max-width:150px;
+            max-height:150px;
+            display:block;
+        }
+        .gallerylink {
+            margin:0 auto;
+        }
+        .thumbnail:hover {
+            box-shadow: 1px 1px 10px rgba(0,150,200,0.7);
+        }
+        .imageholder {
+            text-align:center;
+            margin-left:0 !important;
+        }
+        .imageholder span {
+            display:inline-block;
+            margin:0 auto;
+        }
+        .comments {
+            padding:0;
+            margin-top:10px;
+            overflow:hidden;
+        }
+        .comments .row {
+            padding:10px;
+        }
+        .comments .row:nth-child(odd) {
+          background-color: #3a3a3a;
+          box-shadow:0 1px 4px rgba(200, 200, 200, 0.13) inset;
+        }
+        .comments .row:nth-child(even) {
+          background-color: #373737;
+          box-shadow:0 1px 4px rgba(0, 0, 0, 0.13) inset;
+        }
+        .comment-block {
+            margin-bottom:20px;
+        }
+
+block content
+    #subnav.navbar
+        .container
+            .row-fluid
+                .span1.hide767
+                .span11
+                    ul.nav
+                        block nav
+
+    #content.container-fluid
+        .row-fluid
+            mixin flashbox
+            #body.span10
+                block body

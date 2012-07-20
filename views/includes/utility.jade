@@ -1,0 +1,17 @@
+- // Modified from http://www.zachleat.com/Lib/jquery/humane.js
+- // I just removed the centuries stuff as it was unlikely to be needed here.
+mixin humane_date(date)
+    - function func(e){var f=[[60,"Just Now"],[90,"1 Minute"],[3600,"Minutes",60],[5400,"1 Hour"],[86400,"Hours",3600],[129600,"1 Day"],[604800,"Days",86400],[907200,"1 Week"],[2628E3,"Weeks",604800],[3942E3,"1 Month"],[31536E3,"Months",2628E3],[47304E3,"1 Year"],[31536E5,"Years",31536E3]],a=(""+e).replace(/-/g,"/").replace(/[TZ]/g," "),b=new Date,a=(b-new Date(a)+6E4*b.getTimezoneOffset())/1E3,b=" ago",d=0,c;0>a&&(a=Math.abs(a),b="");for(;c=f[d++];)if(a<c[0])return 2==c.length?c[1]+(1<d?b:""):Math.round(a/c[2])+" "+c[1]+(1<d?b:"");return e}
+    | #{func(date)}
+
+- // I love closure :3
+- // Prints out pretty bytes! 1024 = 1kb
+mixin prettyByte(bytes)
+    - function func(a){var b=+Math.floor(Math.log(a)/Math.log(1024));return(a/Math.pow(1024,b)).toFixed(b?1:0)+" "+["n/a","bytes","kb","mb","gb"][isNaN(a)?0:b+1]};
+    | #{func(bytes)}
+
+- // Explained in msgfilterjs.jade
+mixin parseMessage(msg, comments)
+    //- See msgfilterjs.jade for an explanation of this as the only difference between the two is that this form is meant to be used in templates
+    - function func(a, c){a=a.replace(/\n/g,"<br />");a=a.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig,"<a href='$1'>$1</a>");return a=a.replace(/>>(\d+)/g,function(a,b){return'<a class="commentlink" href="#c'+b+'">@'+c[b].a+"</a>"})}
+    | !{func(msg, comments)}
