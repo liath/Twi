@@ -1,0 +1,41 @@
+extends base
+
+block append head
+    style(type="text/css")
+        #q {
+            display: inline-block;
+            padding: 4px 10px 4px;
+            margin-bottom: 0;
+            font-size: 13px;
+            line-height: 18px;
+            position: relative;
+            float: left;
+            margin-left: 0;
+            -webkit-border-radius: 0;
+            -moz-border-radius: 0;
+            border-radius: 0;
+            -webkit-border-bottom-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+            -webkit-border-top-left-radius: 4px;
+            border-top-left-radius: 4px;
+            -moz-border-radius-bottomleft: 4px;
+            -moz-border-radius-topleft: 4px;
+            vertical-align: middle;
+            background-color: whiteSmoke;
+            border: 1px solid #CCC;
+        }
+
+block nav
+    mixin commentnav('comment/search/')
+
+block body
+    form(action="/comment/search/", method="get")
+        .btn-group
+            input#q(name="q", type="search", placeholder="Search")
+            button.btn(type="submit", value="")
+                i.icon-search
+    br
+    - if (comments.length > 0)
+        mixin output(comments)
+    - else if (search)
+        | Search didn't return any results. :(
