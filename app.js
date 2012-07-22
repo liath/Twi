@@ -1,5 +1,5 @@
 /*
- *  Notes:
+ *  Note:
  *  Browser -> Cloudflare -> Us(302 redirect) -> Image server (Amazon/Imgur/etc)
  *
  * TODO: Add a reaper for unused tags to the cron - Note that in the event of tag corruption, rebuilding from the
@@ -32,6 +32,10 @@
  * TODO: Find and cleanup lines marked with notes. ([!n])
  *
  * TODO: Add quick reply to comment listings
+ *
+ * TODO: Support for Favorites, Subscriptions, Popular (I guess order by view count?), random, and recent changes (hafta have like a queue we push when posts get edited)
+ *
+ * TODO: Pagination is disabled pretty much every where but it's implemented in the providers, just need to handle the get variable
  *
  * NOTES: Some DB functions exists across pretty much every provider, we can prolly abstract those out and just pass the collection to common function
  */
