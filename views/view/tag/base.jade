@@ -1,0 +1,22 @@
+extends ../../layout
+
+block append head
+    style(type="text/css")
+        #body {
+            left: 20px;
+        }
+
+block content
+    #subnav.navbar
+        .container
+            .row-fluid
+                .span1.hide767
+                .span11
+                    ul.nav
+                        block nav
+
+    #content.container-fluid
+        .row-fluid
+            mixin flashbox
+            #body.span10
+                block body

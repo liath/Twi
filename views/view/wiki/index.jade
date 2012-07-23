@@ -26,14 +26,14 @@ block nav
 
 block append main
     #body.span10.rule-v-left
-        table.table.well
-            tbody
+        table.table.table-striped.table-bordered
+            thead
                 tr
                     th
                         h4 Title
                     th
                         h4 Last Edited
-
+            tbody
                 each entry in wiki
                     tr
                         td

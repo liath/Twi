@@ -1,0 +1,12 @@
+mixin linkTag(tag)
+    a.tag(href='/wiki/view/'+tag.n) ?
+    |&nbsp;
+    if tag.m && tag.m.t
+        a(class='tag tag-'+tag.m.t, href='/post/?tags='+tag.n)= tag.p
+    else
+        a.tag(href='/post/?tags='+tag.n)= tag.p
+
+
+mixin properCase(string)
+    - function func(s){return s.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});}
+    | #{func(string)}

@@ -30,3 +30,7 @@ mixin wikinav(active, wiki)
 mixin commentnav(active)
     - categories = [{t: 'comment/', n: 'List'}, {t: 'comment/search/', n: 'Search'}, {t: 'help/comment', n: 'Help'}];
     mixin navbar(active, categories)
+
+mixin tagnav(active)
+    - categories = [{t: 'tag/', n: 'List'}, {t: 'tag/popular/', n: 'Popular'}, {t: 'tag/aliases/', n: 'Aliases'}, { t: 'tag/implications/', n: 'Implications' }, { t: 'help/tag/', n: 'Help' }];
+    mixin navbar(active, categories)

@@ -1,14 +1,23 @@
-/* Colors */
+/* Tag Type Colors */
+.label-character {
+    color:#FFF;
+    background-color:#811399;
+}
+.tag-character {
+    color:#B746CF;
+}
+.tag-character:hover {
+    color:#B746CF;
+}
+
+/* General Colors */
 body {
     background-color:#3f3f3f;
 }
 .well {
     background-color:#333;
 }
-.label-character {
-    color:#FFF;
-    background-color:#811399;
-}
+
 #subnav {
     background-color: #303030;
     border-bottom: 1px solid #252525;
@@ -37,6 +46,24 @@ body {
 }
 #body {
     color:#fff;
+}
+
+#body .table tr td:first-child , #body .table tr th:first-child {
+    border-color:#333;
+}
+#body .table-bordered {
+    border-color:#333;
+    background-color:#373737;
+}
+#body .table-striped tbody tr:nth-child(odd) td, #body .table-striped tbody tr:nth-child(odd) th {
+    background-color: rgba(0,0,0,0.24);
+}
+#body .table tbody tr:hover td, #body .table tbody tr:hover th {
+    background-color: rgba(0,0,0,0.4);
+}
+#body .table th, #body .table td {
+    border-top:0;
+    border-color:#333;
 }
 
 /* Globals */
@@ -134,4 +161,10 @@ body {
         border-left: 0;
         padding-left: 0;
     }*/
+}
+.form-actions {
+    background-color: transparent;
+    border-top: none;
+    padding:0;
+    margin-bottom:0;
 }

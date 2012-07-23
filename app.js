@@ -29,6 +29,8 @@
  *
  * TODO: Implement tag alias searching in tagProvider on lookups
  *
+ * TODO: Implications and Aliases :<<<
+ *
  * TODO: Find and cleanup lines marked with notes. ([!n])
  *
  * TODO: Add quick reply to comment listings
@@ -38,6 +40,13 @@
  * TODO: Pagination is disabled pretty much every where but it's implemented in the providers, just need to handle the get variable
  *
  * NOTES: Some DB functions exists across pretty much every provider, we can prolly abstract those out and just pass the collection to common function
+ *
+ * TODO:[maybe?] Split the nav mixins to their respective subfolders and have the other mixins just use the main one from their own files. Not sure if performance would be effected either way so maybe not.
+ *
+ * TODO: Move /post/ templates into their own subdirectory, who do they are taking the subview folder all to themselves anyways?
+ *
+ * TODO: Help pages. Help so far has been laid out in links as /help/topic. We should def make all these static pages though.
+ *
  */
 
 // Load configuration

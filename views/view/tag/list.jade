@@ -1,0 +1,74 @@
+extends base
+include ../../includes/utility
+
+block append head
+    style(type="text/css")
+        #body form fieldset {
+            width:500px;
+        }
+        #body form label {
+            color:white;
+        }
+        #count-col {width:50px;}
+        #body .table tr td:last-child a {
+            display:block;
+        }
+        #body .table tr td:last-child , #body .table tr th:last-child {
+            text-align:center;
+            width:30px;
+        }
+
+block nav
+    mixin tagnav('tag/')
+
+block body
+    form.form-horizontal(method="get", action="/tag/")
+        fieldset.well.clearfix
+            .control-group
+                label.control-label(for="name") Name
+                .controls
+                    input#name(type="text", name="name")
+
+            .control-group
+                label.control-label(for="type") Type
+                .controls
+                    select(name="type")
+                        option(value="any") Any
+
+
+            .control-group
+                label.control-label(for="order") Order
+                .controls
+                    select(name="order")
+                        option(value="count") Count
+                        option(value="date") Date
+                        option(value="Name") Name
+                        option(value="natural", default="default") Natural
+
+
+            .form-actions
+                button.btn.btn-success(type="submit") Submit
+
+    table.table.table-striped.table-bordered.table-condensed
+        thead
+            tr
+                th#count-col Count
+                th Name
+                th Type
+                th#edit-col Edit
+        tbody
+            - each tag in tags
+                tr
+                    td #{tag.c}
+                    - if (tag.m.t)
+                        td
+                            mixin linkTag(tag)
+                        td(class="tag-"+tag.m.t)
+                            mixin properCase(tag.m.t)
+                    - else
+                        td
+                            mixin linkTag(tag)
+                        td General
+                    td
+                        a(href="/tag/edit/"+tag.n, title="Edit Tag")
+                            i.icon-edit.icon-white
