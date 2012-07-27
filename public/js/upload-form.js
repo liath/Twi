@@ -241,7 +241,7 @@ $(function(){
                 this.onselect(this, val) // Liath - I modified this to pass 'this' so I can get 'this's siblings
                                          // You don't want to know what I did with 'this's siblings
                                          // But let's just say, they are no longer 'of this world'
-                                         // Do you like bannanas?
+                                         // Do you like bananas?
 
             return this.hide()
         }

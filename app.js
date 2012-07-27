@@ -19,6 +19,7 @@ var express = require('express')
   , UserProvider = require('./lib/mongodb/userProvider').UserProvider
   , WikiProvider = require('./lib/mongodb/wikiProvider').WikiProvider
   , CommentProvider = require('./lib/mongodb/commentProvider').CommentProvider
+  , ImplicationProvider = require('./lib/mongodb/implicationProvider').ImplicationProvider
   , FileProvider = require('./lib/upload/'+options.upload.method+'.js').Storage
   , passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
@@ -56,6 +57,8 @@ app.providers.imageProvider= new ImageProvider(db, app.twi.options.resultsPerPag
 app.providers.tagProvider = new TagProvider(db);
 app.providers.userProvider = new UserProvider(db);
 app.providers.wikiProvider = new WikiProvider(db);
+app.providers.implicationProvider = new ImplicationProvider(db);
+app.db = db;
 
 function setup() {
     return function (req, res, next) {
