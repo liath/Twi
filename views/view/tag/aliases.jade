@@ -1,0 +1,34 @@
+extends base
+include ../../includes/utility
+
+block append head
+    style(type="text/css")
+        #body form fieldset {
+            width:500px;
+        }
+        #body form label {
+            color:white;
+        }
+        #body .table tr td:first-child , #body .table tr th:first-child {
+            text-align:center;
+            width:20px;
+        }
+
+block nav
+    mixin tagnav('tag/aliases/')
+
+block body
+    form.form-horizontal(method="get", action="/tag/aliases/")
+        .input-append
+            input#name(type="text", name="q")
+            button.btn.btn-primary(type="submit") Search
+
+    table.table.table-striped.table-bordered.table-condensed
+        thead
+            tr
+                th &nbsp;
+                th From
+                th To
+                th Reason
+        tbody
+            //- each item in implications
