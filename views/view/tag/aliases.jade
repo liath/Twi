@@ -31,4 +31,11 @@ block body
                 th To
                 th Reason
         tbody
-            //- each item in implications
+            - each item in aliases
+                tr
+                    td &nbsp;
+                    td
+                        mixin linkTag({n:item.f, p:item.f})
+                    td
+                        mixin linkTag({n:item.t, p:item.t})
+                    td #{item.r}

@@ -13,6 +13,10 @@ block append head
             text-align:center;
             width:20px;
         }
+        .tagC {
+            float:none;
+            margin-left:3px;
+        }
 
 block nav
     mixin tagnav('tag/implications/')
@@ -31,4 +35,13 @@ block body
                 th Consequent
                 th Reason
         tbody
-            //- each item in implications
+            - each item in implications
+                tr
+                    td &nbsp;
+                    td
+                        mixin linkTag(item.f)
+                        span.tagC.badge.badge-info #{item.f.c}
+                    td
+                        mixin linkTag(item.t)
+                        span.tagC.badge.badge-info #{item.t.c}
+                    td #{item.r}
