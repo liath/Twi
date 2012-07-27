@@ -1,53 +1,8 @@
 /*
- *  Note:
- *  Browser -> Cloudflare -> Us(302 redirect) -> Image server (Amazon/Imgur/etc)
- *
- * TODO: Add a reaper for unused tags to the cron - Note that in the event of tag corruption, rebuilding from the
- *  images collection isn't entirely sufficient, I suppose I could de-sluggify though.. hmm. replace - with ' ' and
- *  pretty case it.... Why didn't I just do that?
- *
- * TODO: Make all uploads hit this before offloading them to storage so we can do an md5 check. Pretty sure I'll
- * have to do that anyways to implement AWS support and I dislike having my imgur key out in the open.
- *
- * TODO: Make view count only increase on unique ip or something
- * This can be as simple as storing a cookie and only counting views from cookieless browsers
- * To as wildly complex as arrays of bloom filters tracking unique ip addresses for every image
- * Perhaps even use google analytics to track it for us and occasionally query them for the count...
- *
- * TODO: On the note of view counts, if we leave them as is we should prolly pool them then update them from cron so
- * we aren't spawning a database call for every image load for something so trivial
- *
- * TODO: Finish the voting system on posts, prolly be some quick ajax
- *
- * TODO: Keep track of x number of recent wiki/tag changes
- *
- * TODO: When a user looks up an expensive item we can prolly store the item in redis(session) to save a second lookup if they post to that item
- *
- * TODO: Make descriptions for tags use markdown
- *
- * TODO: Consider lazy loading comments
- *
- * TODO: Implement tag alias searching in tagProvider on lookups
- *
- * TODO: Implications and Aliases :<<<
- *
- * TODO: Find and cleanup lines marked with notes. ([!n])
- *
- * TODO: Add quick reply to comment listings
- *
- * TODO: Support for Favorites, Subscriptions, Popular (I guess order by view count?), random, and recent changes (hafta have like a queue we push when posts get edited)
- *
- * TODO: Pagination is disabled pretty much every where but it's implemented in the providers, just need to handle the get variable
- *
- * NOTES: Some DB functions exists across pretty much every provider, we can prolly abstract those out and just pass the collection to common function
- *
- * TODO:[maybe?] Split the nav mixins to their respective subfolders and have the other mixins just use the main one from their own files. Not sure if performance would be effected either way so maybe not.
- *
- * TODO: Move /post/ templates into their own subdirectory, who do they are taking the subview folder all to themselves anyways?
- *
- * TODO: Help pages. Help so far has been laid out in links as /help/topic. We should def make all these static pages though.
- *
+ * You don't need to edit anything in this file. Go look at settings.js.example.
  */
+
+'use strict';
 
 // Load configuration
 var options = require('./settings.js');
@@ -80,21 +35,18 @@ app.twi.options = options;
 
 //Providers
 var db = new Db(app.twi.options.database.name, new Server(app.twi.options.database.host, app.twi.options.database.port, {auto_reconnect: true}, {}));
-db.open(function(error){
-    db.authenticate(app.twi.options.database.user, app.twi.options.database.pass, function(error, result) {
-        if (error) console.log('DB Auth Error (app.js:142)'+error);
+db.open(function(){
+    db.authenticate(app.twi.options.database.user, app.twi.options.database.pass, function(error) {
+        if (error) console.log('DB Auth Error (app.js:38)'+error);
         var getUniqueId = function(){
-            var rand=0;
             while(true){
-                rand=(Math.floor(Math.random()*1000)+(new Date()).getTime()).toString(16);
-                if(db.images.findOne({a:rand},{_id:1})) {
-                    continue;}else{break;}
+                var rand=(Math.floor(Math.random()*1000)+(new Date()).getTime()).toString(16);
+                //If we find a number that doesn't return a result, break cause THUNDERCATS HO!
+                if (!db.images.findOne({a:rand},{_id:1}) || db.images.findOne({a:rand},{_id:1}) === null) break;
             }
             return rand;
         };
-        db.eval('var func = '+getUniqueId.toString()+' db.code.insert({"_id" : "getUniqueId", "value" : func });', function(error, result) {
-
-        });
+        db.eval('var func = '+getUniqueId.toString()+' db.code.insert({"_id" : "getUniqueId", "value" : func });', function() {});
     });
 });
 app.providers = {};
@@ -152,7 +104,7 @@ app.configure('all', function(){
                 t: false, //Port
                 d: false, //Db
                 s: false  //Pass
-            }
+            };
             if (process.env.REDISTOGO_URL) {
                 var url = require('url'),
                     redisUrl = url.parse(process.env.REDISTOGO_URL),
@@ -248,8 +200,11 @@ app.post('/login',
 
 // Cron
 setInterval(function() {
-    app.providers.userProvider.reaper(function(error, result){
-        if (error) console.log('User Reaper Error (app.js:588): '+error);
+    app.providers.userProvider.reaper(function(error){
+        if (error) console.log('User Reaper Error (app.js:205): '+error);
+    });
+    app.providers.tagProvider.reaper(function(error){
+        if (error) console.log('Tag Reaper Error (app.js:208): '+error);
     });
 },3600000); //One hour
 
