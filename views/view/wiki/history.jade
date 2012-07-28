@@ -45,7 +45,7 @@ block append main
 
 block append scripts
     -if (wiki.o.length > 0)
-        script(type="text/javascript", src="/js/wDiff.js")
+        script(type="text/javascript", src="/js/wDiff.min.js")
         script(type="text/javascript")
             $(function() {
                 var history = JSON.parse('#{(JSON.stringify(wiki.o)).replace(/'/g, "\'").replace('\n', "\\n")}'.replace(/&quot;/g, '"'));

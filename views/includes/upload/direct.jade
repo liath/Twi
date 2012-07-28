@@ -199,23 +199,20 @@ block scripts
     // The jQuery UI widget factory, can be omitted if jQuery UI is already included
     script(src="/js/libs/jquery.ui.widget.js")
     // The Templates plugin is included to render the upload/download listings
-    script(src="/js/tmpl.min.js")
+    script(src="/js/blueimp/tmpl.min.js")
     // The Load Image plugin is included for the preview images and image resizing functionality
-    script(src="/js/load-image.min.js")
+    script(src="/js/blueimp/load-image.min.js")
     // The Canvas to Blob plugin is included for image resizing functionality
-    script(src="/js/canvas-to-blob.min.js")
+    script(src="/js/blueimp/canvas-to-blob.min.js")
     // The Iframe Transport is required for browsers without support for XHR file uploads
-    script(src="/js/jquery.iframe-transport.js")
+    script(src="/js/blueimp/jquery.iframe-transport.js")
     // The basic File Upload plugin
-    script(src="/js/jquery.fileupload.js")
+    script(src="/js/blueimp/jquery.fileupload.js")
     // The File Upload file processing plugin
-    script(src="/js/jquery.fileupload-fp.js")
+    script(src="/js/blueimp/jquery.fileupload-fp.js")
     // The File Upload user interface plugin
-    script(src="/js/jquery.fileupload-ui.js")
+    script(src="/js/blueimp/jquery.fileupload-ui.js")
     // The localization script
-    script(src="/js/locale.js")
-    // The main application script
-    script(src="/js/upload-form.js")
-    //The XDomainRequest Transport is included for cross-domain file deletion for IE8+
-    //if gte IE 8
-        script(src="js/cors/jquery.xdr-transport.js")
+    script(src="/js/blueimp/locale.js")
+
+    script(src="/js/upload-form.min.js")

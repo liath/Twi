@@ -153,14 +153,16 @@ body {
     .hide767 {
         display:none !important;
     }
-    /*
-    #body.rule-v-left {
-        -webkit-box-shadow: none;
-        -moz-box-shadow: none;
-        box-shadow:none;
-        border-left: 0;
-        padding-left: 0;
-    }*/
+}
+@media (max-width: 500px) {
+    #github {
+        display:none;
+    }
+}
+@media (max-width: 979px) {
+    #github {
+        right:90px;
+    }
 }
 .form-actions {
     background-color: transparent;
