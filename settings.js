@@ -21,7 +21,6 @@ var settings = {
         , pass : ''
     }
     //How many images appear in the list page (/post)
-    , redis : false,
     , resultsPerPage: 15
     , wikiResultsPerPage: 20
     //Mail settings, SMTP auth. See https://github.com/andris9/Nodemailer for more
