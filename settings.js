@@ -5,10 +5,10 @@ var settings = {
     sessionKey : "twibooru wut", //CHANGE ME FOR THE LOVE OF CERTAIN CELESTIAL GODDESSES WHO WILL GO UNNAMED HERE
     database: {
         name: 'database-name'
-        , host: 'mongo-host.example.com'
-        , port: 33757
-        , user: 'mongo' //Some mongo setups won't require authentication. Not sure if you need to as well. Prolly will.
-        , pass: 'password'
+        , host: 'heroku_khp3ljgs'
+        , port: 19658
+        , user: 'heroku_khp3ljgs' //Some mongo setups won't require authentication. Not sure if you need to as well. Prolly will.
+        , pass: ''
     }
     /*Set redis to false to disable it completely. (, redis : false,
                                                     , resultsPerPage : 15
