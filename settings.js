@@ -5,10 +5,10 @@ var settings = {
     sessionKey : "twibooru wut", //CHANGE ME FOR THE LOVE OF CERTAIN CELESTIAL GODDESSES WHO WILL GO UNNAMED HERE
     database: {
         name: 'fathomless-atoll-32496'
-        , host: 'heroku_khp3ljgs'
-        , port: 19658
-        , user: 'bc9b49e9984921' //Some mongo setups won't require authentication. Not sure if you need to as well. Prolly will.
-        , pass: '93ec6c45'
+        , host: 'l3855uft9zao23e2.cbetxkdyhwsb.us-east-1.rds.amazonaws.com'
+        , port:  3306
+        , user: 'qrf66zh5lf555afq' //Some mongo setups won't require authentication. Not sure if you need to as well. Prolly will.
+        , pass: 'fshueekuwfbtuxgf'
     }
     /*Set redis to false to disable it completely. (, redis : false,
                                                     , resultsPerPage : 15
