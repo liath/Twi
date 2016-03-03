@@ -1,21 +1,33 @@
 {
-    "name": "twi"
-  , "version": "0.0.4"
-  , "private": true
-  , "dependencies": {
-      "express": ">= 3.0.0alpha4"
-    , "less": ">= 0.0.1"
-    , "jade": ">= 0.26.3"
-    , "mongodb": ">= 0.9.6-7"
-    , "connect": ">= 2.3.0"
-    , "passport": ">= 0.1.8"
-    , "passport-local": ">= 0.1.2"
-    , "connect-flash": ">= 0.1.0"
-    , "nodemailer": ">= 0.3.2"
-    , "minimatch": ">= 0.2.4"
-    , "imagemagick": ">= 0.1.2"
-    , "connect-redis": ">= 1.4.0"
-  }, "engines": {
-	"node": "0.8.x"
+  "name": "twi",
+  "version": "0.0.5",
+  "private": true,
+  "dependencies": {
+    "express": "*",
+    "express-session": "*",
+    "cookie-parser": "*",
+    "less": "*",
+    "jade": "*",
+    "mongodb": "*",
+    "connect": "*",
+    "passport": "*",
+    "passport-local": "*",
+    "connect-flash": "*",
+    "nodemailer": "*",
+    "minimatch": "*",
+    "imagemagick": "*",
+    "connect-redis": "*",
+    "jstransformer-marked": "*",
+    "serve-favicon": "*",
+    "morgan": "*",
+    "body-parser": "*",
+    "method-override": "*"
+  },
+  "devDependencies": {
+    "supertest": "*",
+    "mocha": "*"
+  },
+  "engines": {
+    "node": "5.7.x"
   }
 }

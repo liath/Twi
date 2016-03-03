@@ -2,7 +2,7 @@ extends view
 include ../includes/utility.jade
 
 block head
-    style(type="text/css")
+    style(type="text/css").
         .filesize, .username {
             color:#006699;
         }
@@ -226,7 +226,7 @@ block append main
                         a.btn.btn-info#preview Preview
 
 block append scripts
-    script
+    script.
         $(function() {
             if (window.location.hash) {
                 var match = /^#c\d+/;

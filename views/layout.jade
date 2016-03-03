@@ -2,17 +2,13 @@ include includes/navbars
 include includes/flashbox
 include includes/global
 
-!!!html
-- var beg = '<html class="no-js'
-- var end = '" lang="en">'
-//if lt IE 7
-    != beg + ' lt-ie9 lt-ie8 lt-ie7' + end
-//if IE 7
-    != beg + ' lt-ie9 lt-ie8' + end
-//if IE 8
-    != beg + ' lt-ie9' + end
-//if gt IE 8
-    != '<!-->' + beg + end + '<!--'
+doctype html
+| <!--[if IE]>
+|   <html class="no-js ie">
+| <![endif]-->
+| <![if !IE]>
+|   <html class="no-js not-ie">
+| <![endif]>
 
 head
     meta(charset='utf-8')
@@ -53,3 +49,5 @@ body
     script(src='/js/site_w_bootstrap.min.js')
 
     block scripts
+
+| </html>

@@ -1,7 +1,7 @@
 extends ../view
 
 block head
-    style(type="text/css")
+    style(type="text/css").
         #body {
             padding-left: 20px;
         }
@@ -48,8 +48,8 @@ block append scripts
         script(type="text/javascript", src="/js/wDiff.min.js")
         script(type="text/javascript")
             $(function() {
-                var history = JSON.parse('#{(JSON.stringify(wiki.o)).replace(/'/g, "\'").replace('\n', "\\n")}'.replace(/&quot;/g, '"'));
-                var current = JSON.parse('#{(JSON.stringify(wiki.r.m)).replace(/'/g, "\'").replace('\n', "\\n")}'.replace(/&quot;/g, '"'));
+                var history = JSON.parse('#{(JSON.stringify(wiki.o)).replace(/'/g, "\'").replace('\n', "\\n")}.replace(/&quot;/g, '"'));
+                var current = JSON.parse('#{(JSON.stringify(wiki.r.m)).replace(/'/g, "\'").replace('\n', "\\n")}.replace(/&quot;/g, '"'));
 
                 if (history.length > 0) {
                     var l = history.length-1;
