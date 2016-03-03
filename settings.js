@@ -6,14 +6,14 @@ var settings = {
     database: {
         name: 'fathomless-atoll-32496'
         , host: 'l3855uft9zao23e2.cbetxkdyhwsb.us-east-1.rds.amazonaws.com'
-        , port:  3306
+        , port: 3306
         , user: 'qrf66zh5lf555afq' //Some mongo setups won't require authentication. Not sure if you need to as well. Prolly will.
         , pass: 'fshueekuwfbtuxgf'
     }
     /*Set redis to false to disable it completely. (, redis : false,
                                                     , resultsPerPage : 15
                                                     ...)*/
-    , redis : {
+    , redis : false
         //If ENV has REDISTOGOURL it will be used instead and this will be ignored
         host   : ''
         , port : ''
