@@ -4,7 +4,7 @@
 var settings = {
     sessionKey : "twibooru wut", //CHANGE ME FOR THE LOVE OF CERTAIN CELESTIAL GODDESSES WHO WILL GO UNNAMED HERE
     database: {
-        name: 'database-name'
+        name: 'heroku_khp3ljgs'
         , host: 'heroku_khp3ljgs'
         , port: 19658
         , user: 'test' //Some mongo setups won't require authentication. Not sure if you need to as well. Prolly will.
