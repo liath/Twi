@@ -4,11 +4,11 @@
 var settings = {
     sessionKey : "twibooru wut", //CHANGE ME FOR THE LOVE OF CERTAIN CELESTIAL GODDESSES WHO WILL GO UNNAMED HERE
     database: {
-        name: 'heroku_khp3ljgs'
+        name: 'fathomless-atoll-32496'
         , host: 'heroku_khp3ljgs'
         , port: 19658
-        , user: 'test' //Some mongo setups won't require authentication. Not sure if you need to as well. Prolly will.
-        , pass: 'snakes123'
+        , user: 'bc9b49e9984921' //Some mongo setups won't require authentication. Not sure if you need to as well. Prolly will.
+        , pass: '93ec6c45'
     }
     /*Set redis to false to disable it completely. (, redis : false,
                                                     , resultsPerPage : 15
