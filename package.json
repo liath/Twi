@@ -2,32 +2,35 @@
   "name": "twi",
   "version": "0.0.5",
   "private": true,
+  "scripts": {
+    "start": "node app.js",
+    "start-dev": "NODE_ENV=dev nodemon",
+    "test": "mocha -R spec tests/all.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Liath/Twi.git"
+  },
   "dependencies": {
+    "connect-flash": "*",
+    "connect-redis": "*",
+    "cookie-parser": "*",
     "express": "*",
     "express-session": "*",
-    "cookie-parser": "*",
-    "less": "*",
     "jade": "*",
     "mongodb": "*",
-    "connect": "*",
-    "passport": "*",
-    "passport-local": "*",
-    "connect-flash": "*",
-    "nodemailer": "*",
-    "minimatch": "*",
-    "imagemagick": "*",
-    "connect-redis": "*",
-    "jstransformer-marked": "*",
-    "serve-favicon": "*",
+    "mongojs": "^2.3.0",
     "morgan": "*",
-    "body-parser": "*",
-    "method-override": "*"
+    "nodemailer": "*",
+    "passport": "*",
+    "passport-local": "*"
   },
   "devDependencies": {
     "supertest": "*",
-    "mocha": "*"
+    "mocha": "*",
+    "nodemon": "*"
   },
   "engines": {
-    "node": "5.7.x"
+    "node": "*"
   }
 }
