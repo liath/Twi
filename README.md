@@ -4,6 +4,21 @@ Basic functionality is present but I would at best put the project at an early b
 
 The comments, notes, artists, and tags sections haven't been touched but the stuff that involves them in the other tabs is essentially done, they just need routes and templates.
 
+### Usage
+```
+git clone https://github.com/Liath/Twi.git twi
+cd twi
+nano settings.js # Configure to your needs
+# If you're running with local storage:
+npm start
+# If you're using something like heroku, you'll need to get the settings into the
+# TWI_SETTINGS environment variable. Here's a complete Heroku setup.
+heroku create
+heroku config:set TWI_SETTINGS=`node -e "console.log(JSON.stringify(require('./settings.js')));"`
+heroku git:remote
+git push heroku
+```
+
 ### Features Implemented:
 - Transparent Imgur storage
 

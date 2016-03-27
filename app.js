@@ -123,9 +123,9 @@ if (app.twi.options.redis) {
   }
 }
 app.use(expressSession(sessionInfo));
-app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(flash());
 
 app.use((req, res, next) => {
   // Template globals

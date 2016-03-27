@@ -19,7 +19,7 @@
     "express-session": "*",
     "jade": "*",
     "mongodb": "*",
-    "mongojs": "^2.3.0",
+    "mongojs": "*",
     "morgan": "*",
     "nodemailer": "*",
     "passport": "*",
