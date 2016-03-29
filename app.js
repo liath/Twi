@@ -36,7 +36,6 @@ options.version = 'v0.0.5';
 var http = require('http'),
   express = require('express'),
   expressSession = require('express-session'),
-  cookieParser = require('cookie-parser'),
   morgan = require('morgan'),
   ImageProvider = require('./lib/mongodb/imageProvider').ImageProvider,
   AliasProvider = require('./lib/mongodb/aliasProvider').AliasProvider,
@@ -83,7 +82,6 @@ app.set('view engine', 'jade');
 //    ((app.twi.options.upload.method == 'direct') ? app.twi.options.upload.paths.temp : null)
 // }));
 
-app.use(cookieParser(app.twi.options.sessionKey));
 var sessionInfo = {
   resave: false,
   saveUninitialized: false,

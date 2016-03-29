@@ -14,7 +14,6 @@
   "dependencies": {
     "flash": "*",
     "connect-redis": "*",
-    "cookie-parser": "*",
     "express": "*",
     "express-session": "*",
     "jade": "*",
