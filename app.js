@@ -48,7 +48,7 @@ var http = require('http'),
   FileProvider = require('./lib/upload/' + options.upload.method + '.js').Storage,
   passport = require('passport'),
   LocalStrategy = require('passport-local').Strategy,
-  flash = require('connect-flash');
+  flash = require('flash');
 
 if (options.redis) {
   var RedisStore = require('connect-redis')(expressSession);
