@@ -141,8 +141,8 @@ app.use((req, res, next) => {
     res.locals.board.user = req.user;
   }
   res.locals.board.flash = {
-    error: req.flash('error'),
-    info: req.flash('info')
+    // error: req.flash('error'),
+    // info: req.flash('info')
   };
 
   for (var i = 0; i < res.locals.board.flash.length; i++) {
