@@ -124,7 +124,21 @@ if (app.twi.options.redis) {
 } else {
   sessionInfo.store = new MongoStore({db: app.db})
 }
+
 app.use(session(sessionInfo));
+
+// Check if Redis has failed us for the last time!
+// Hopefully this works...
+if (app.twi.options.redis) {
+  app.use(function (req, res, next) {
+  if (!req.session) {
+    sessionInfo.store = new MongoStore({db: app.db})
+    app.use(session(sessionInfo));
+  }
+  next() // otherwise continue 
+})
+}
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
