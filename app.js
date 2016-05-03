@@ -35,7 +35,7 @@ options.version = 'v0.0.5';
  */
 var http = require('http'),
   express = require('express'),
-  expressSession = require('express-session'),
+  session = require('express-session'),
   morgan = require('morgan'),
   ImageProvider = require('./lib/mongodb/imageProvider').ImageProvider,
   AliasProvider = require('./lib/mongodb/aliasProvider').AliasProvider,
@@ -50,7 +50,9 @@ var http = require('http'),
   flash = require('flash');
 
 if (options.redis) {
-  var RedisStore = require('connect-redis')(expressSession);
+  var RedisStore = require('connect-redis')(session);
+} else {
+  var MongoStore = require('connect-mongo')(session);
 }
 
 // App setup
@@ -119,8 +121,10 @@ if (app.twi.options.redis) {
   } else {
     sessionInfo.store = new RedisStore();
   }
+} else {
+  sessionInfo.store = new MongoStore({db: app.db})
 }
-app.use(expressSession(sessionInfo));
+app.use(session(sessionInfo));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
