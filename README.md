@@ -1,6 +1,7 @@
 Twi is a danbooru clone written on Node.js/Express and Bootstrap
 ----------------------------------------------------------------
-Basic functionality is present but I would at best put the project at an early beta status.
+[ ![Codeship Status for Liath/Twi](https://codeship.com/projects/d6af8d80-4fec-0133-ab42-6a4e3a7a7098/status?branch=master)](https://codeship.com/projects/107457)
+Basic functionality is present but I would at best put the project at an early beta status. (Now working on Heroku Cedar-14!)
 
 The comments, notes, artists, and tags sections haven't been touched but the stuff that involves them in the other tabs is essentially done, they just need routes and templates.
 
@@ -30,7 +31,7 @@ git push heroku
 
 Unless noted otherwise, all of my code in this project shall be licensed as follows:
 
-Copyright 2013 John Jones <Liath@github>
+Copyright 2016 John Jones <Liath@github>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
