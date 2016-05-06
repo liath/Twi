@@ -45,15 +45,11 @@ var http = require('http'),
   CommentProvider = require('./lib/mongodb/commentProvider').CommentProvider,
   ImplicationProvider = require('./lib/mongodb/implicationProvider').ImplicationProvider,
   FileProvider = require('./lib/upload/' + options.upload.method + '.js').Storage,
+  mongojs = require('mongojs'),
   passport = require('passport'),
   LocalStrategy = require('passport-local').Strategy,
-  flash = require('flash');
-
-if (options.redis) {
-  var RedisStore = require('connect-redis')(session);
-} else {
-  var MongoStore = require('connect-mongo')(session);
-}
+  flash = require('flash'),
+  RedisStore = require('connect-redis')(session);
 
 // App setup
 var app = express();
@@ -62,18 +58,15 @@ app.twi.options = options;
 
 // Providers
 app.providers = {};
-var dbUrl = 'mongodb://' + app.twi.options.database.user + ':' + app.twi.options.database.pass + '@' + app.twi.options.database.host + ':' + app.twi.options.database.port + '/' + app.twi.options.database.name;
-var mongojs = require('mongojs');
-var db = mongojs(dbUrl);
-app.db = db;
-app.providers.commentProvider = new CommentProvider(db.collection('comments'));
+app.db = mongojs('mongodb://' + app.twi.options.database.user + ':' + app.twi.options.database.pass + '@' + app.twi.options.database.host + ':' + app.twi.options.database.port + '/' + app.twi.options.database.name);
+app.providers.commentProvider = new CommentProvider(app.db.collection('comments'));
 app.providers.fileProvider = new FileProvider(app.twi.options);
-app.providers.imageProvider = new ImageProvider(db.collection('images'),
+app.providers.imageProvider = new ImageProvider(app.db.collection('images'),
 app.twi.options.resultsPerPage);
-app.providers.aliasProvider = new AliasProvider(db.collection('aliases'));
-app.providers.tagProvider = new TagProvider(db.collection('tags'));
-app.providers.userProvider = new UserProvider(db.collection('users'));
-app.providers.wikiProvider = new WikiProvider(db.collection('wiki'));
+app.providers.aliasProvider = new AliasProvider(app.db.collection('aliases'));
+app.providers.tagProvider = new TagProvider(app.db.collection('tags'));
+app.providers.userProvider = new UserProvider(app.db.collection('users'));
+app.providers.wikiProvider = new WikiProvider(app.db.collection('wiki'));
 app.providers.implicationProvider = new ImplicationProvider(app.db.collection('implications'));
 
 app.set('views', __dirname + '/views');
@@ -90,54 +83,38 @@ var sessionInfo = {
   secret: app.twi.options.sessionKey
 };
 
-if (app.twi.options.redis) {
-  var conf = {
-    h: false, // Host
-    t: false, // Port
-    d: false, // Db
-    s: false // Pass
-  };
-  if (process.env.REDISTOGO_URL) {
-    var url = require('url'),
-      redisUrl = url.parse(process.env.REDISTOGO_URL),
-      redisAuth = redisUrl.auth.split(':');
-    conf.h = redisUrl.hostname;
-    conf.t = redisUrl.port;
-    conf.d = redisAuth[0];
-    conf.s = redisAuth[1];
-  } else if (app.twi.options.redis.host) {
-    conf.h = app.twi.options.redis.host;
-    conf.t = app.twi.options.redis.port;
-    conf.d = app.twi.options.redis.db;
-    conf.s = app.twi.options.redis.pass;
-  }
-  if (conf.h) {
-    sessionInfo.store = new RedisStore({
-      host: conf.h,
-      port: conf.t,
-      db: conf.d,
-      pass: conf.s
-    });
-  } else {
-    sessionInfo.store = new RedisStore();
-  }
-} else {
-  sessionInfo.store = new MongoStore({db: app.db})
+var conf = {
+  h: false, // Host
+  t: false, // Port
+  d: false, // Db
+  s: false // Pass
+};
+if (process.env.REDISTOGO_URL) {
+  var url = require('url'),
+    redisUrl = url.parse(process.env.REDISTOGO_URL),
+    redisAuth = redisUrl.auth.split(':');
+  conf.h = redisUrl.hostname;
+  conf.t = redisUrl.port;
+  conf.d = 0;
+  conf.s = redisAuth[1];
+} else if (app.twi.options.redis.host) {
+  conf.h = app.twi.options.redis.host;
+  conf.t = app.twi.options.redis.port;
+  conf.d = app.twi.options.redis.db;
+  conf.s = app.twi.options.redis.pass;
 }
+if (conf.h) {
+  sessionInfo.store = new RedisStore({
+    host: conf.h,
+    port: conf.t,
+    db: conf.d,
+    pass: conf.s
+  });
+} else {
+  sessionInfo.store = new RedisStore();
+} 
 
 app.use(session(sessionInfo));
-
-// Check if Redis has failed us for the last time!
-// Hopefully this works...
-if (app.twi.options.redis) {
-  app.use(function (req, res, next) {
-  if (!req.session) {
-    sessionInfo.store = new MongoStore({db: app.db})
-    app.use(session(sessionInfo));
-  }
-  next() // otherwise continue 
-})
-}
 
 app.use(passport.initialize());
 app.use(passport.session());

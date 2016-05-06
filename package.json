@@ -12,11 +12,10 @@
     "url": "https://github.com/Liath/Twi.git"
   },
   "dependencies": {
-    "flash": "*",
     "connect-redis": "*",
-    "connect-mongo": "*",
     "express": "*",
     "express-session": "*",
+    "flash": "*",
     "jade": "*",
     "mongodb": "*",
     "mongojs": "*",
