@@ -1,6 +1,6 @@
 mixin flashbox
     // Begin flashbox
-    - if (board.flash.error.length > 0 || board.flash.info.length > 0) {
+    - if (board.flash && (board.flash.error || board.flash.info) && (board.flash.error.length > 0 || board.flash.info.length > 0)) {
         .flash-box
             - if (board.flash.error.length > 0) {
                 - each flash in board.flash.error
